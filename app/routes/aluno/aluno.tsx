@@ -36,15 +36,65 @@ export default function AlunoDashboard() {
   };
 
   return (
-    <main className={`min-h-screen w-full ${darkMode ? "dark" : ""}`}>
-      <div className="min-h-screen w-full bg-[#F4F7FA] dark:bg-[#0D1117] dark:text-white transition">
+    <main className={`min-h-screen w-full ${darkMode ? "dark" : ""} transition-colors duration-500`}>
+      <div className="min-h-screen w-full bg-[#F4F7FA] dark:bg-[#0D1117] dark:text-white transition-colors duration-500">
 
         {/* TOPO */}
-        <header className="w-full border-b bg-white dark:bg-[#161B22] dark:border-gray-700 h-20 flex items-center justify-between px-10 shadow-sm">
-          <div className="flex items-center gap-3">
+        <header className="w-full border-b bg-white dark:bg-[#161B22] dark:border-gray-700 h-20 flex items-center justify-between px-10 shadow-sm animate-fadeIn">
+          <style>{`
+            .animate-fadeIn {
+              animation: fadeIn 0.6s ease;
+            }
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(-5px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .pop {
+              transition: transform .2s;
+            }
+            .pop:hover { transform: scale(1.05); }
+
+            /* fade suave individual dos cards */
+            .card-anim {
+              animation: fadeCard 0.6s ease forwards;
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            @keyframes fadeCard {
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+
+            /* efeito de brilho no hover */
+            .glow:hover {
+              box-shadow: 0 0 12px rgba(0, 140, 255, 0.35);
+            }
+
+            /* pulse no status */
+            .pulse {
+              animation: pulseStatus 2s infinite;
+            }
+            @keyframes pulseStatus {
+              0% { transform: scale(1); }
+              50% { transform: scale(1.06); }
+              100% { transform: scale(1); }
+            }
+
+            /* efeito tilt 3D */
+            .tilt {
+              transition: transform 0.2s ease;
+            }
+            .tilt:hover {
+              transform: perspective(800px) rotateX(6deg) rotateY(-6deg) scale(1.02);
+            }
+          `}</style>
+
+          <div className="flex items-center gap-3 pop">
             <img
               src={student.foto}
-              className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600"
+              className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
             />
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Meu Perfil</p>
@@ -53,20 +103,18 @@ export default function AlunoDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-
-            {/* INTERRUPTOR FODA DE TEMA */}
+            {/* INTERRUPTOR DE TEMA */}
             <button
               onClick={() => setDarkMode(!darkMode)}
               className={`
-                w-20 h-10 rounded-full flex items-center px-1 transition-all duration-300 relative
-                ${darkMode ? "bg-[#09121C]" : "bg-gray-300"}
+                w-20 h-10 rounded-full flex items-center px-1 transition-all duration-500 relative pop
+                ${darkMode ? "bg-[#0D1117]" : "bg-gray-300"}
               `}
             >
-              {/* DESLIZADAS DELICIOSAS */}
               <div
                 className={`
-                  w-8 h-8 rounded-full bg-white shadow flex items-center justify-center absolute transition-all duration-300
-                  ${darkMode ? "translate-x-10" : "translate-x-0"}
+                  w-8 h-8 rounded-full bg-white shadow flex items-center justify-center absolute transition-all duration-500
+                  ${darkMode ? "translate-x-10 rotate-180" : "translate-x-0 rotate-0"}
                 `}
               >
                 {darkMode ? (
@@ -77,54 +125,52 @@ export default function AlunoDashboard() {
               </div>
             </button>
 
-            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition">
+            <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition pop">
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </header>
 
         {/* CONTEÚDO */}
-        <div className="px-10 py-10">
-          <h1 className="text-3xl font-bold">
+        <div className="px-10 py-10 animate-fadeIn">
+          <h1 className="text-3xl font-bold animate-fadeIn">
             Bem-vindo, {student.nome.split(" ")[0]}!
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-1">
+          <p className="text-gray-600 dark:text-gray-300 mt-1 animate-fadeIn">
             Aqui você pode visualizar suas informações e notas de comportamento
           </p>
 
-          {/* GRID AJUSTADA */}
+          {/* GRID */}
           <div className="grid grid-cols-4 gap-10 mt-10 items-start">
 
             {/* COLUNA ESQUERDA */}
-            <div className="col-span-1 h-full">
+            <div className="col-span-1 h-full animate-fadeIn">
               <div
                 className="
-                  bg-white dark:bg-[#161B22] 
+                  bg-white dark:bg-[#161B22]
                   shadow-[0_4px_20px_rgba(0,0,0,0.08)]
                   dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-                  rounded-xl 
-                  p-6 text-center 
-                  h-full w-full 
-                  min-h-[900px] 
+                  rounded-xl p-6 text-center h-full w-full min-h-[900px]
                   flex flex-col items-center justify-start
+                  pop card-anim glow tilt
                 "
               >
                 <img
                   src={student.foto}
-                  className="w-28 h-28 rounded-full mx-auto border-4 border-blue-400 shadow"
+                  className="w-28 h-28 rounded-full mx-auto border-4 border-blue-400 shadow-lg animate-fadeIn"
                 />
 
-                <h2 className="text-xl font-semibold mt-4">{student.nome}</h2>
-                <p className="text-sm text-gray-500 dark:text-gray-300">{student.turma}</p>
+                <h2 className="text-xl font-semibold mt-4 animate-fadeIn">{student.nome}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-300 animate-fadeIn">{student.turma}</p>
 
                 <div
-                  className={`mt-3 text-white rounded-full px-4 py-1 text-sm font-medium ${comportamentoColor[student.statusComportamento]}`}
+                  className={`mt-3 text-white rounded-full px-4 py-1 text-sm font-medium pulse ${comportamentoColor[student.statusComportamento]} animate-fadeIn`}
                 >
                   {student.statusComportamento.charAt(0).toUpperCase() +
                     student.statusComportamento.slice(1)}
                 </div>
 
-                <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-600 dark:text-gray-300 animate-fadeIn">
                   <BookOpen className="w-4 h-4" />
                   {student.disciplinas.length} disciplinas
                 </div>
@@ -132,24 +178,22 @@ export default function AlunoDashboard() {
             </div>
 
             {/* COLUNA DIREITA */}
-            <div className="col-span-3 flex flex-col gap-10">
+            <div className="col-span-3 flex flex-col gap-10 animate-fadeIn">
 
               {/* INFORMAÇÕES PESSOAIS */}
               <div className="
-                bg-white dark:bg-[#161B22] 
+                bg-white dark:bg-[#161B22]
                 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
                 dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-                rounded-xl p-6 
-                min-h-[300px]
+                rounded-xl p-6 min-h-[300px]
+                pop glow tilt card-anim
               ">
-                <h2 className="flex items-center gap-2 text-lg font-semibold">
+                <h2 className="flex items-center gap-2 text-lg font-semibold animate-fadeIn">
                   <Info className="w-5 h-5 text-blue-600" />
                   Informações pessoais
                 </h2>
 
-                <div className="grid grid-cols-3 gap-4 mt-4">
-
-                  {/* COLUNA 1 — IDADE + ID */}
+                <div className="grid grid-cols-3 gap-4 mt-4 animate-fadeIn">
                   <div>
                     <p className="text-gray-500 dark:text-gray-300 text-sm">Idade</p>
                     <p className="font-semibold">{student.idade} anos</p>
@@ -158,7 +202,6 @@ export default function AlunoDashboard() {
                     <p className="font-semibold">{student.id}</p>
                   </div>
 
-                  {/* COLUNA 2 — TURMA + STATUS */}
                   <div>
                     <p className="text-gray-500 dark:text-gray-300 text-sm">Turma</p>
                     <p className="font-semibold">{student.turma}</p>
@@ -176,7 +219,6 @@ export default function AlunoDashboard() {
                         : "Não matriculado"}
                     </span>
                   </div>
-
                   <div></div>
                 </div>
               </div>
@@ -186,19 +228,19 @@ export default function AlunoDashboard() {
                 bg-white dark:bg-[#161B22]
                 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
                 dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-                rounded-xl p-6 
-                min-h-[300px]
+                rounded-xl p-6 min-h-[300px]
+                pop glow tilt card-anim
               ">
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 animate-fadeIn">
                   <User className="w-5 h-5 text-blue-600" />
                   Minhas disciplinas
                 </h2>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-3 animate-fadeIn">
                   {student.disciplinas.map((disciplina, index) => (
                     <div
                       key={index}
-                      className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center gap-2 text-gray-700 dark:text-gray-200 text-sm"
+                      className="px-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center gap-2 text-gray-700 dark:text-gray-200 text-sm pop glow transition"
                     >
                       <BookOpen className="w-4 h-4 text-blue-600" />
                       {disciplina}
@@ -212,31 +254,28 @@ export default function AlunoDashboard() {
                 bg-white dark:bg-[#161B22]
                 shadow-[0_4px_20px_rgba(0,0,0,0.08)]
                 dark:shadow-[0_4px_20px_rgba(0,0,0,0.4)]
-                rounded-xl p-6 
-                min-h-[300px]
+                rounded-xl p-6 min-h-[300px]
+                pop glow tilt card-anim
               ">
-                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 animate-fadeIn">
                   <Info className="w-5 h-5 text-blue-600" />
                   Histórico de comportamento
                 </h2>
 
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 animate-fadeIn">
                   {student.comportamentoHistorico.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-gradient-to-r from-blue-100 to-green-100 
-                                 dark:from-[#1f2937] dark:to-[#1e3a34] 
-                                 rounded-lg p-4 flex items-center justify-between"
+                      className="flex items-center justify-between px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-700 pop glow transition"
                     >
                       <div>
                         <p className="font-semibold">{item.bimestre}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">{item.meses}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-300">{item.meses}</p>
                       </div>
-
                       <span
-                        className={`${comportamentoColor[item.status]} text-white px-4 py-1 rounded-full text-sm font-medium`}
+                        className={`px-3 py-1 text-white rounded-full text-sm font-medium ${comportamentoColor[item.status]}`}
                       >
-                        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+                        {item.status}
                       </span>
                     </div>
                   ))}
@@ -245,7 +284,6 @@ export default function AlunoDashboard() {
 
             </div>
           </div>
-
         </div>
       </div>
     </main>
