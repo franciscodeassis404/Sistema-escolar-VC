@@ -6,4 +6,5 @@ export default [
 	route("admin", "routes/admin/admin.tsx"),
 	route("adduser", "routes/admin/adduser.tsx"),
 	route("professor", "routes/professor/professor.tsx"),
+	route("perfilprofessor", "routes/professor/perfilprofessor.tsx"),
 ] satisfies RouteConfig;

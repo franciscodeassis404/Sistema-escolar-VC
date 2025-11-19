@@ -1,5 +1,6 @@
 import * as React from "react";
 import type {Route} from "./+types/professor";
+import { Link } from "react-router";
 
 import {Navbar} from "./../../components/ui/navbar";
 import { Button } from "~/components/ui/button";
@@ -138,7 +139,8 @@ export default function ProfessorRoute() {
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {alunosFiltrados.map((aluno) => (
-                <Card key={aluno.id} className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center">
+                <Link key={aluno.id} to={`/perfilprofessor?alunoId=${aluno.id}`}>
+                <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
                   <CardHeader className="flex flex-col items-center w-full pb-2">
                     <Avatar className="h-16 w-16">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${aluno.id}`} />
@@ -162,12 +164,14 @@ export default function ProfessorRoute() {
                     </div>
                   </CardContent>
                 </Card>
+                </Link>
               ))}
             </div>
           ) : (
             <div className="space-y-3">
               {alunosFiltrados.map((aluno) => (
-                <div key={aluno.id} className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow">
+                <Link key={aluno.id} to={`/perfilprofessor?alunoId=${aluno.id}`}>
+                <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="flex items-center gap-4 flex-1">
                     <Avatar className="h-12 w-12">
                       <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${aluno.id}`} />
@@ -189,6 +193,7 @@ export default function ProfessorRoute() {
                     </div>
                   </div>
                 </div>
+                </Link>
               ))}
             </div>
           )}

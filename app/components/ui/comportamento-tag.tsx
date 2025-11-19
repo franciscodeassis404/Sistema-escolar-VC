@@ -29,6 +29,11 @@ const comportamentoStyles: Record<ComportamentoType, { bg: string; text: string;
 export function ComportamentoTag({ tipo, className }: ComportamentoTagProps) {
   const style = comportamentoStyles[tipo];
 
+  if (!style) {
+    console.error(`Tipo de comportamento inválido: ${tipo}`);
+    return null;
+  }
+
   return (
     <span
       className={cn(
