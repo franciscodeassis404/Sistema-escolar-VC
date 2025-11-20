@@ -90,18 +90,22 @@ function LoginForm({
     onChange: (value: (typeof profiles)[number]["value"]) => void;
     isActive: boolean;
   }) => {
-    const iconStyle = `size-6 text-primary ${isActive ? "text-white" : "text-primary"}`;
-
     return (
       <Button
         type="button"
-        variant={isActive ? "default" : "outline"}
-        className={`group w-40 h-16 flex flex-col items-center justify-center gap-2 bg-transparent border-primary border-2 ${isActive ? "bg-primary text-white" : "text-primary"} hover:bg-primary hover:text-white transition-all duration-300`}
+        variant="outline"
+        className={`group w-40 h-16 flex flex-col items-center justify-center gap-2 border-primary border-2 transition-all duration-300 ${
+          isActive 
+            ? "bg-primary text-white hover:bg-primary hover:text-white" 
+            : "bg-white text-primary hover:bg-primary/10"
+        }`}
         onClick={() => onChange(profile.value)}
       >
         <div className="flex items-center justify-center">
           {React.cloneElement(profile.icon, {
-            className: `${iconStyle} group-hover:text-white transition-colors duration-300`,
+            className: `size-6 transition-colors duration-300 ${
+              isActive ? "text-white" : "text-primary"
+            }`,
           })}
         </div>
         {profile.label}
