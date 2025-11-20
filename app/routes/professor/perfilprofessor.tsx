@@ -1,201 +1,157 @@
 import * as React from "react";
-import type {Route} from "./+types/perfilprofessor";
+import type {Route} from "./+types/perfilProfessor";
 import { useSearchParams, useNavigate } from "react-router";
-import { BookOpen, LogOut, TrendingUp, GraduationCap, ArrowLeft } from "lucide-react";
-import { ComportamentoTag } from "~/components/ui/comportamento-tag";
-
-const comportamentoColor: Record<string, string> = {
-  pessimo: "bg-red-500",
-  ruim: "bg-orange-500",
-  mediano: "bg-yellow-500",
-  bom: "bg-blue-500",
-  excelente: "bg-green-500",
-};
+import { BookOpen, ArrowLeft, Users, GraduationCap } from "lucide-react";
 
 export default function PerfilProfessorRoute() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const alunoId = searchParams.get('alunoId');
+  const professorId = searchParams.get('professorId');
+  const from = searchParams.get('from') || 'admin';
 
-  // Dados simulados de alunos
-  const todosAlunos = [
-    { id: 1, nome: "João Silva", idade: 14, turma: "1º A", id_matricula: "#010101010101010", statusMatricula: "Matriculado", statusComportamento: "excelente", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=1", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "excelente" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "bom" }] },
-    { id: 2, nome: "Maria Santos", idade: 15, turma: "1º A", id_matricula: "#020202020202020", statusMatricula: "Matriculado", statusComportamento: "bom", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=2", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "bom" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "excelente" }] },
-    { id: 3, nome: "Pedro Oliveira", idade: 14, turma: "1º B", id_matricula: "#030303030303030", statusMatricula: "Matriculado", statusComportamento: "ruim", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=3", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "bom" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "ruim" }] },
-    { id: 4, nome: "Ana Costa", idade: 15, turma: "1º B", id_matricula: "#040404040404040", statusMatricula: "Matriculado", statusComportamento: "excelente", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=4", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "excelente" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "excelente" }] },
-    { id: 5, nome: "Lucas Ferreira", idade: 16, turma: "2º A", id_matricula: "#050505050505050", statusMatricula: "Matriculado", statusComportamento: "bom", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=5", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "bom" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "bom" }] },
-    { id: 6, nome: "Carla Souza", idade: 16, turma: "2º A", id_matricula: "#060606060606060", statusMatricula: "Matriculado", statusComportamento: "excelente", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=6", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "excelente" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "excelente" }] },
-    { id: 7, nome: "Bruno Costa", idade: 17, turma: "2º B", id_matricula: "#070707070707070", statusMatricula: "Matriculado", statusComportamento: "ruim", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=7", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "ruim" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "bom" }] },
-    { id: 8, nome: "Juliana Lima", idade: 17, turma: "2º B", id_matricula: "#080808080808080", statusMatricula: "Matriculado", statusComportamento: "bom", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=8", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "bom" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "excelente" }] },
-    { id: 9, nome: "Rafael Mendes", idade: 16, turma: "2º B", id_matricula: "#090909090909090", statusMatricula: "Matriculado", statusComportamento: "excelente", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=9", disciplinas: ["Matemática", "História", "Geografia", "Ciências", "Português", "Inglês"], comportamentoHistorico: [{ bimestre: "1 Bimestre", meses: "Jan - Mar", status: "excelente" }, { bimestre: "2 Bimestre", meses: "Abril - Jun", status: "excelente" }] },
+  // Dados simulados de professores
+  const todosProfessores = [
+    { id: 1, nome: "Carlos Almeida", idade: 35, departamento: "Matemática", turmas: 4, status: "ativo", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=prof1", email: "carlos.almeida@escola.com", telefone: "(11) 98765-4321", turmasLecionadas: ["1º A", "1º B", "2º A", "2º B"] },
+    { id: 2, nome: "Fernanda Ribeiro", idade: 42, departamento: "Português", turmas: 5, status: "ativo", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=prof2", email: "fernanda.ribeiro@escola.com", telefone: "(11) 98765-4322", turmasLecionadas: ["1º A", "1º B", "2º A", "2º B", "3º A"] },
+    { id: 3, nome: "Ricardo Souza", idade: 39, departamento: "História", turmas: 3, status: "inativo", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=prof3", email: "ricardo.souza@escola.com", telefone: "(11) 98765-4323", turmasLecionadas: ["1º A", "2º A", "3º A"] },
+    { id: 4, nome: "Patrícia Gomes", idade: 33, departamento: "Ciências", turmas: 4, status: "ativo", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=prof4", email: "patricia.gomes@escola.com", telefone: "(11) 98765-4324", turmasLecionadas: ["1º A", "1º B", "2º A", "2º B"] },
+    { id: 5, nome: "Marcos Lima", idade: 45, departamento: "Geografia", turmas: 2, status: "ativo", foto: "https://api.dicebear.com/7.x/avataaars/svg?seed=prof5", email: "marcos.lima@escola.com", telefone: "(11) 98765-4325", turmasLecionadas: ["2º A", "3º A"] },
   ];
 
-  const aluno = todosAlunos.find(a => a.id === Number(alunoId)) || todosAlunos[0];
-
-  const professor = {
-    nome: aluno.nome,
-    idade: aluno.idade,
-    turma: aluno.turma,
-    id: aluno.id_matricula,
-    statusMatricula: aluno.statusMatricula,
-    statusComportamento: aluno.statusComportamento,
-    foto: aluno.foto,
-    disciplinas: aluno.disciplinas,
-    comportamentoHistorico: aluno.comportamentoHistorico,
-  };
-
-  const handleLogout = () => {
-    console.log("Deslogando...");
-  };
+  const professor = todosProfessores.find(p => p.id === Number(professorId)) || todosProfessores[0];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background dark:bg-gray-900">
       {/* Navbar */}
-      <nav className="w-full bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between">
+      <nav className="w-full bg-card dark:bg-gray-800 border-b border-border px-8 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <button
-            onClick={() => navigate('/professor')}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            onClick={() => navigate(`/${from}`)}
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             title="Voltar"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
           </button>
           <div className="flex items-center gap-3">
-          <img
-            src={professor.foto}
-            alt={professor.nome}
-            className="w-10 h-10 rounded-full"
-          />
-          <div>
-            <p className="text-sm font-semibold text-gray-800">Perfil do aluno</p>
-            <p className="text-xs text-gray-500">{professor.nome}</p>
-          </div>
+            <img
+              src={professor.foto}
+              alt={professor.nome}
+              className="w-10 h-10 rounded-full"
+            />
+            <div>
+              <p className="text-sm font-semibold text-foreground">Perfil do Professor</p>
+              <p className="text-xs text-muted-foreground">{professor.nome}</p>
+            </div>
           </div>
         </div>
-
-        <button
-          onClick={handleLogout}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-          title="Sair"
-        >
-        </button>
       </nav>
 
       <div className="px-8 py-8 h-[calc(100vh-4rem)]">
         {/* Título */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Bem-vindo, Professor!
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Perfil do Professor
           </h1>
-          <p className="text-gray-600">
-            Aqui você pode visualizar as informações e notas de comportamento de seus alunos
+          <p className="text-muted-foreground">
+            Informações detalhadas sobre o professor
           </p>
         </div>
 
-    
         <div className="grid grid-cols-12 gap-6 h-[calc(100%-8rem)]">
           {/* Sidebar */}
           <div className="col-span-3 h-full">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col items-center h-full">
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6 flex flex-col items-center h-full">
               <img
                 src={professor.foto}
                 alt={professor.nome}
-                className="w-24 h-24 rounded-full mb-4"
+                className="w-32 h-32 rounded-full mb-4"
               />
+              <h2 className="text-xl font-bold text-foreground mb-1">{professor.nome}</h2>
+              <p className="text-sm text-muted-foreground mb-4">{professor.departamento}</p>
               
-              <h2 className="text-lg font-semibold text-gray-900 text-center mb-1">
-                {professor.nome}
-              </h2>
-              
-              <p className="text-sm text-gray-500 mb-3">{professor.turma}</p>
-
-              <div className="mb-4">
-                <ComportamentoTag tipo={professor.statusComportamento as "bom" | "ruim" | "excelente"} />
+              <div className={`px-3 py-1 rounded-full text-xs font-medium mb-6 ${
+                professor.status === "ativo" 
+                  ? "bg-accent text-accent-foreground" 
+                  : "bg-destructive/10 text-destructive"
+              }`}>
+                {professor.status === "ativo" ? "Ativo" : "Inativo"}
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <BookOpen className="w-4 h-4" />
-                <span>10 disciplinas</span>
+              <div className="w-full space-y-4">
+                <div className="flex items-center gap-3 text-foreground">
+                  <GraduationCap className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Idade</p>
+                    <p className="text-sm font-medium">{professor.idade} anos</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-3 text-foreground">
+                  <Users className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Turmas</p>
+                    <p className="text-sm font-medium">{professor.turmas} turmas</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 text-foreground">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Departamento</p>
+                    <p className="text-sm font-medium">{professor.departamento}</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="col-span-9 flex flex-col gap-6 h-full overflow-y-auto">
-            {/* INFORMAÇÕES PESSOAIS */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-6">
-                <GraduationCap className="w-5 h-5 text-blue-600" />
-                Informações pessoais
-              </h2>
-
-              <div className="grid grid-cols-3 gap-8">
+          <div className="col-span-9 space-y-6 overflow-auto">
+            {/* Informações de Contato */}
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">Informações de Contato</h3>
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Idade</p>
-                  <p className="text-base font-semibold text-gray-900">{professor.idade} anos</p>
+                  <p className="text-xs text-muted-foreground mb-1">Email</p>
+                  <p className="text-sm font-medium text-foreground">{professor.email}</p>
                 </div>
-
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Turma</p>
-                  <p className="text-base font-semibold text-gray-900">{professor.turma}</p>
-                </div>
-
-                <div></div>
-
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">ID aluno</p>
-                  <p className="text-base font-semibold text-gray-900">{professor.id}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Status</p>
-                  <span className="inline-block bg-green-500 text-white text-xs font-medium px-3 py-1 rounded-full">
-                    {professor.statusMatricula}
-                  </span>
+                  <p className="text-xs text-muted-foreground mb-1">Telefone</p>
+                  <p className="text-sm font-medium text-foreground">{professor.telefone}</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-6">
-                <BookOpen className="w-5 h-5 text-blue-600" />
-                Disciplinas Cadastradas
-              </h2>
-
-              <div className="grid grid-cols-3 gap-3">
-                {professor.disciplinas.map((disciplina, index) => (
+            {/* Turmas Lecionadas */}
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">Turmas Lecionadas</h3>
+              <div className="grid grid-cols-4 gap-3">
+                {professor.turmasLecionadas.map((turma, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-3 rounded-xl"
+                    className="bg-primary/10 border border-primary/20 rounded-lg p-4 text-center"
                   >
-                    <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm font-medium">{disciplina}</span>
+                    <p className="text-sm font-bold text-primary">{turma}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* HISTÓRICO DE COMPORTAMENTO */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-6">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
-                Histórico de comportamento
-              </h2>
-
-              <div className="space-y-3">
-                {professor.comportamentoHistorico.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between bg-blue-50 px-6 py-4 rounded-xl"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900">{item.bimestre}</p>
-                      <p className="text-xs text-gray-500">{item.meses}</p>
-                    </div>
-                    <ComportamentoTag tipo={item.status as "bom" | "ruim" | "excelente"} />
-                  </div>
-                ))}
+            {/* Estatísticas */}
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">Estatísticas</h3>
+              <div className="grid grid-cols-3 gap-6">
+                <div className="bg-primary/10 border border-primary/30 rounded-lg p-4">
+                  <p className="text-xs text-primary mb-1">Total de Alunos</p>
+                  <p className="text-2xl font-bold text-primary">{professor.turmas * 25}</p>
+                </div>
+                <div className="bg-accent/20 border border-accent/40 rounded-lg p-4">
+                  <p className="text-xs text-foreground mb-1">Turmas Ativas</p>
+                  <p className="text-2xl font-bold text-foreground">{professor.turmas}</p>
+                </div>
+                <div className="bg-muted/50 border border-border rounded-lg p-4">
+                  <p className="text-xs text-muted-foreground mb-1">Departamento</p>
+                  <p className="text-lg font-bold text-foreground">{professor.departamento}</p>
+                </div>
               </div>
             </div>
           </div>
