@@ -60,7 +60,7 @@ export default function ProfessorRoute() {
 
   return (
     <>
-      <Navbar />
+      <Navbar tipoPerfil="professor" />
       <section className="flex min-h-screen flex-col bg-background dark:bg-gray-900">
         {/* Cabeçalho */}
         <div className="border-b border-border bg-card dark:bg-gray-800 px-8 py-6">
@@ -139,7 +139,7 @@ export default function ProfessorRoute() {
           ) : viewMode === "grid" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {alunosFiltrados.map((aluno) => (
-                <Link key={aluno.id} to={`/perfilprofessor?alunoId=${aluno.id}`}>
+                <Link key={aluno.id} to={`/perfilAluno?alunoId=${aluno.id}&from=professor`}>
                 <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
                   <CardHeader className="flex flex-col items-center w-full pb-2">
                     <Avatar className="h-16 w-16">
@@ -170,7 +170,7 @@ export default function ProfessorRoute() {
           ) : (
             <div className="space-y-3">
               {alunosFiltrados.map((aluno) => (
-                <Link key={aluno.id} to={`/perfilprofessor?alunoId=${aluno.id}`}>
+                <Link key={aluno.id} to={`/perfilAluno?alunoId=${aluno.id}&from=professor`}>
                 <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
                   <div className="flex items-center gap-4 flex-1">
                     <Avatar className="h-12 w-12">
