@@ -1,14 +1,19 @@
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 import logo from "./../../../public/logo.svg";
 import TagPerfil from "./tag-perfil";
 import { Button } from "./button";
+import ThemeToggle from "./theme";
 
 import {LogOut} from "lucide-react";
 
-
-
-const Navbar = ({ className, ...props }: React.ComponentProps<"nav">) => {
+type NavbarProps = {
+  tipoPerfil?: "aluno" | "professor" | "admin";
+  className?: string;
+} & React.ComponentProps<"nav">;
+const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) => {
+    const navigate = useNavigate();
     return (
     <header className="w-full border-b bg-white dark:bg-[#161B22] dark:border-gray-700 h-20 flex items-center justify-between px-10 shadow-sm">
       <div className="flex items-center gap-3">
@@ -23,8 +28,14 @@ const Navbar = ({ className, ...props }: React.ComponentProps<"nav">) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <TagPerfil />
-        <Button variant="outline" size="sm" className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-700">
+        <ThemeToggle />
+        <TagPerfil tipo={tipoPerfil} />
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-700"
+        >
           <LogOut className="w-4 h-4" />
           Sair
         </Button>
