@@ -1,4 +1,4 @@
-import api from './api';
+import { apiClient } from './api-client';
 
 export interface AlunoCard {
   id: number;
@@ -18,7 +18,7 @@ export interface PageResponse<T> {
   number: number;
 }
 
-export interface FiltroAlunos {
+interface ListarAlunosParams {
   page?: number;
   size?: number;
   idTurma?: number | null;
@@ -27,49 +27,25 @@ export interface FiltroAlunos {
 }
 
 export const alunoService = {
-  /**
-   * Lista alunos com filtros e paginação
-   */
-  async listar(filtros: FiltroAlunos = {}): Promise<PageResponse<AlunoCard>> {
-    try {
-      const params = new URLSearchParams();
+  listar: async (params: ListarAlunosParams): Promise<PageResponse<AlunoCard>> => {
+    // ✅ Usando o endpoint correto
+    const response = await apiClient.get<PageResponse<AlunoCard>>(
+      '/professor/dashboard/alunos',
+      {
+        params: {
+          page: params.page || 0,
+          size: params.size || 9,
+          idTurma: params.idTurma,
+          busca: params.busca,
+          statusComportamento: params.statusComportamento
+        }
+      }
+    );
+    return response.data;
+  },
 
-      if (filtros.page !== undefined) params.append('page', String(filtros.page));
-      if (filtros.size !== undefined) params.append('size', String(filtros.size));
-      if (filtros.idTurma) params.append('idTurma', String(filtros.idTurma));
-      if (filtros.busca) params.append('busca', filtros.busca);
-      if (filtros.statusComportamento) params.append('statusComportamento', filtros.statusComportamento);
-
-      const response = await api.get<PageResponse<AlunoCard>>(
-        `/professor/dashboard/alunos?${params.toString()}`
-      );
-
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao listar alunos:', error);
-      throw new Error('Erro ao carregar lista de alunos');
-    }
-  },
-  async buscarPerfil(idAluno: number) {
-    try {
-      const response = await api.get(`/aluno/dashboard/perfil/${idAluno}`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar perfil do aluno:', error);
-      throw new Error('Erro ao carregar perfil do aluno');
-    }
-  },
-  async buscarHistoricoComportamento(idAluno: number) {
-    try {
-      const response = await api.get(`/aluno/dashboard/${idAluno}/comportamento`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar histórico:', error);
-      throw new Error('Erro ao carregar histórico de comportamento');
-    }
-  },
-  getFotoUrl(foto: string | null): string {
-    if (!foto) return `https://api.dicebear.com/7.x/avataaars/svg?seed=default`;
-    return `http://localhost:8080/uploads/${foto}`;
-  },
+  getFotoUrl: (filename: string | null): string => {
+    if (!filename) return 'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
+    return `http://localhost:8080/uploads/${filename}`;
+  }
 };

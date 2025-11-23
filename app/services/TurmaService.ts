@@ -1,4 +1,4 @@
-import api from './api';
+import { apiClient } from './api-client';
 
 export interface TurmaSimplificada {
   id: number;
@@ -6,18 +6,13 @@ export interface TurmaSimplificada {
 }
 
 export const turmaService = {
-  async listarTurmasDoProfessor(): Promise<TurmaSimplificada[]> {
+  listarTurmasDoProfessor: async (): Promise<TurmaSimplificada[]> => {
     try {
-      const response = await api.get<TurmaSimplificada[]>('/professor/dashboard/turmas');
+      const response = await apiClient.get<TurmaSimplificada[]>('/professor/dashboard/turmas');
       return response.data;
     } catch (error) {
-      console.error('Erro ao listar turmas:', error);
-      return [
-        { id: 1, nome: "1º A" },
-        { id: 2, nome: "1º B" },
-        { id: 3, nome: "2º A" },
-        { id: 4, nome: "2º B" },
-      ];
+      console.error('Erro ao carregar turmas:', error);
+      return [];
     }
-  },
+  }
 };

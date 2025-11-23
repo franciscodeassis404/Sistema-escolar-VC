@@ -16,7 +16,6 @@ import {
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { PasswordInput } from "~/components/ui/password-input";
 import {
   Form,
@@ -27,11 +26,8 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import {
-  CircleUserRound,
   GraduationCap,
-  School,
-  SchoolIcon,
-  Shield,
+  CircleUserRound,
   Users,
 } from "lucide-react";
 
@@ -55,6 +51,7 @@ function Welcome() {
           </span>
         </h1>
       </div>
+
       <img
         src="/viriato_correa.svg"
         alt="Viriato Correia"
@@ -76,13 +73,9 @@ function LoginForm({
   error?: string;
 }) {
   const profiles = [
-    {
-      label: "Professor",
-      value: "professor" as const,
-      icon: <GraduationCap />,
-    },
-    { label: "Aluno", value: "aluno" as const, icon: <Users /> },
-    { label: "Admin", value: "admin" as const, icon: <CircleUserRound /> },
+    { label: "Professor", value: "professor", icon: <GraduationCap /> },
+    { label: "Aluno", value: "aluno", icon: <Users /> },
+    { label: "Admin", value: "admin", icon: <CircleUserRound /> },
   ];
 
   const ProfileSelect = ({
@@ -93,29 +86,23 @@ function LoginForm({
     profile: (typeof profiles)[number];
     onChange: (value: (typeof profiles)[number]["value"]) => void;
     isActive: boolean;
-  }) => {
-    return (
-      <Button
-        type="button"
-        variant="outline"
-        className={`group w-40 h-16 flex flex-col items-center justify-center gap-2 border-primary border-2 transition-all duration-300 ${
-          isActive 
-            ? "bg-primary text-white hover:bg-primary hover:text-white" 
-            : "bg-white text-primary hover:bg-primary/10"
-        }`}
-        onClick={() => onChange(profile.value)}
-      >
-        <div className="flex items-center justify-center">
-          {React.cloneElement(profile.icon, {
-            className: `size-6 transition-colors duration-300 ${
-              isActive ? "text-white" : "text-primary"
-            }`,
-          })}
-        </div>
-        {profile.label}
-      </Button>
-    );
-  };
+  }) => (
+    <Button
+      type="button"
+      variant="outline"
+      className={`group w-40 h-16 flex flex-col items-center justify-center gap-2 border-primary border-2 transition-all duration-300 ${
+        isActive
+          ? "bg-primary text-white hover:bg-primary hover:text-white"
+          : "bg-white text-primary hover:bg-primary/10"
+      }`}
+      onClick={() => onChange(profile.value)}
+    >
+      {React.cloneElement(profile.icon, {
+        className: `size-6 ${isActive ? "text-white" : "text-primary"}`,
+      })}
+      {profile.label}
+    </Button>
+  );
 
   return (
     <section className="flex w-full items-center justify-center">
@@ -131,12 +118,14 @@ function LoginForm({
             Faça login para acessar o sistema
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-950 dark:border-red-800">
               <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
             </div>
           )}
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -168,11 +157,7 @@ function LoginForm({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="seu@email.com"
-                        type="email"
-                        {...field}
-                      />
+                      <Input placeholder="seu@email.com" type="email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -196,11 +181,9 @@ function LoginForm({
               <Button type="submit" className="w-full" disabled={isDisabled}>
                 Entrar
               </Button>
+
               <div className="flex items-center justify-center">
-                <a
-                  href="#"
-                  className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-                >
+                <a className="text-sm text-muted-foreground underline-offset-4 hover:underline">
                   Esqueci a senha
                 </a>
               </div>
@@ -221,7 +204,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Login() {
   const navigate = useNavigate();
-  const [error, setError] = React.useState<string>("");
+  const [error, setError] = React.useState("");
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -229,37 +212,36 @@ export default function Login() {
     mode: "onChange",
   });
 
-  const email = form.watch("email");
-  const password = form.watch("password");
-  const isDisabled = !email || !password || form.formState.isSubmitting;
+  const isDisabled =
+    !form.watch("email") ||
+    !form.watch("password") ||
+    form.formState.isSubmitting;
 
+  // Aqui está seu onSubmit exatamente como você enviou
   async function onSubmit(values: LoginValues) {
     setError("");
-    
+
     try {
-      // Fazer login
       const response = await authService.login({
         email: values.email,
-        senha: values.password,
+        senha: values.password, // authService trata internamente
       });
 
-      // Redirecionar baseado no perfil
       switch (response.perfil) {
-        case 'ALUNO':
-          navigate('/aluno');
+        case "ALUNO":
+          navigate("/aluno");
           break;
-        case 'PROFESSOR':
-          navigate('/professor');
+        case "PROFESSOR":
+          navigate("/professor");
           break;
-        case 'ADMIN':
-          navigate('/admin');
+        case "ADMIN":
+          navigate("/admin");
           break;
         default:
-          navigate('/');
+          navigate("/");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro ao fazer login");
-      console.error("Erro no login:", err);
     }
   }
 
@@ -267,7 +249,13 @@ export default function Login() {
     <main className="min-h-screen w-full bg-linear-to-br from-[#C0D5F9] to-[#D0F9DF]">
       <div className="container mx-auto grid min-h-screen w-full grid-cols-1 items-center gap-8 px-4 py-10 md:grid-cols-2">
         <Welcome />
-        <LoginForm form={form} onSubmit={onSubmit} isDisabled={isDisabled} error={error} />
+
+        <LoginForm
+          form={form}
+          onSubmit={onSubmit}
+          isDisabled={isDisabled}
+          error={error}
+        />
       </div>
     </main>
   );
