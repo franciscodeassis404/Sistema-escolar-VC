@@ -22,7 +22,8 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
 
   // ação de confirmação
   function handleConfirmLogout() {
-    window.location.href = "/login";
+    setShowLogout(false);
+    navigate("/");
   }
 
   return (
@@ -48,7 +49,7 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setShowLogout(true)}   // AQUI ABRE O MODAL
+            onClick={() => setShowLogout(true)}   
             className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-700"
           >
             <LogOut className="w-4 h-4" />

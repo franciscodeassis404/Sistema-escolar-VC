@@ -1,7 +1,7 @@
 import * as React from "react";
 import type {Route} from "./+types/perfilAluno";
 import { useSearchParams, useNavigate } from "react-router";
-import { BookOpen, LogOut, TrendingUp, GraduationCap, ArrowLeft } from "lucide-react";
+import { BookOpen, LogOut, TrendingUp, GraduationCap, ArrowLeft, Pencil } from "lucide-react";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
 
 const comportamentoColor: Record<string, string> = {
@@ -74,12 +74,16 @@ export default function PerfilProfessorRoute() {
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="p-2 hover:bg-accent rounded-lg transition-colors"
-          title="Sair"
-        >
-        </button>
+        {from === 'admin' && (
+          <button
+            onClick={() => console.log('Editar aluno', alunoId)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            title="Editar perfil"
+          >
+            <Pencil className="w-4 h-4" />
+            Editar
+          </button>
+        )}
       </nav>
 
       <div className="px-8 py-8 h-[calc(100vh-4rem)]">

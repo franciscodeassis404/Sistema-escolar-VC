@@ -1,4 +1,4 @@
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Upload, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { Navbar } from "~/components/ui/navbar";
@@ -6,6 +6,22 @@ import { Navbar } from "~/components/ui/navbar";
 export default function AddUser() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setPhotoPreview(null);
+  };
 
   return (
     <>
@@ -26,6 +42,51 @@ export default function AddUser() {
           </p>
 
           <form className="space-y-5">
+
+            {/* Foto do usuário */}
+            <div>
+              <label className="font-medium text-foreground block mb-2">Foto do usuário</label>
+              <div className="flex items-center gap-4">
+                {photoPreview ? (
+                  <div className="relative">
+                    <img 
+                      src={photoPreview} 
+                      alt="Preview" 
+                      className="w-24 h-24 rounded-full object-cover border-2 border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    id="photo-upload"
+                  />
+                  <label
+                    htmlFor="photo-upload"
+                    className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors"
+                  >
+                    Escolher foto
+                  </label>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Formatos aceitos: JPG, PNG, GIF (máx. 5MB)
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* Tipo de usuário */}
             <div>
