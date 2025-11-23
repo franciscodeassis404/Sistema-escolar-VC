@@ -8,4 +8,8 @@ export default [
 	route("professor", "routes/professor/professor.tsx"),
 	route("perfilAluno", "routes/professor/perfilAluno.tsx"),
 	route("perfilProfessor", "routes/professor/perfilProfessor.tsx"),
+	
+	// API Routes (Backend For Frontend)
+	route("api/auth", "routes/api/auth.ts"),
+	route("api/usuarios", "routes/api/usuarios.ts"),
 ] satisfies RouteConfig;

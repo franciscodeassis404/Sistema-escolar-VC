@@ -3,6 +3,8 @@ import * as React from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router";
+import { authService } from "~/services/auth.service";
 
 import {
   Card,
@@ -66,10 +68,12 @@ function LoginForm({
   form,
   onSubmit,
   isDisabled,
+  error,
 }: {
   form: UseFormReturn<LoginValues>;
   onSubmit: (values: LoginValues) => Promise<void>;
   isDisabled: boolean;
+  error?: string;
 }) {
   const profiles = [
     {
@@ -128,6 +132,11 @@ function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-950 dark:border-red-800">
+              <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+            </div>
+          )}
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -211,6 +220,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Login() {
+  const navigate = useNavigate();
+  const [error, setError] = React.useState<string>("");
+
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: "", password: "", profile: "professor" },
@@ -222,15 +234,40 @@ export default function Login() {
   const isDisabled = !email || !password || form.formState.isSubmitting;
 
   async function onSubmit(values: LoginValues) {
-    // TODO: integrar com ação do servidor ou autenticação
-    console.log(values);
+    setError("");
+    
+    try {
+      // Fazer login
+      const response = await authService.login({
+        email: values.email,
+        senha: values.password,
+      });
+
+      // Redirecionar baseado no perfil
+      switch (response.perfil) {
+        case 'ALUNO':
+          navigate('/aluno');
+          break;
+        case 'PROFESSOR':
+          navigate('/professor');
+          break;
+        case 'ADMIN':
+          navigate('/admin');
+          break;
+        default:
+          navigate('/');
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao fazer login");
+      console.error("Erro no login:", err);
+    }
   }
 
   return (
     <main className="min-h-screen w-full bg-linear-to-br from-[#C0D5F9] to-[#D0F9DF]">
       <div className="container mx-auto grid min-h-screen w-full grid-cols-1 items-center gap-8 px-4 py-10 md:grid-cols-2">
         <Welcome />
-        <LoginForm form={form} onSubmit={onSubmit} isDisabled={isDisabled} />
+        <LoginForm form={form} onSubmit={onSubmit} isDisabled={isDisabled} error={error} />
       </div>
     </main>
   );
