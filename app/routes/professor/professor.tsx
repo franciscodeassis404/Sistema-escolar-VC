@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Link } from "react-router";
-
 import { Navbar } from "./../../components/ui/navbar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
@@ -10,7 +9,7 @@ import { ComportamentoTag } from "~/components/ui/comportamento-tag";
 import { Grid3x3, Search, BookOpen, List, User, Loader2 } from "lucide-react";
 
 import { alunoService, type AlunoCard, type PageResponse } from "~/services/alunoService";
-import { turmaService, type TurmaSimplificada } from "~/services/turmaService";
+import { turmaService, type TurmaSimplificada } from "~/services/TurmaService";
 
 export default function ProfessorRoute() {
   const [searchTerm, setSearchTerm] = React.useState("");

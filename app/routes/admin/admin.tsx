@@ -3,39 +3,14 @@ import { Link } from "react-router";
 import { Navbar } from "./../../components/ui/navbar";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
-import ThemeToggle from "~/components/ui/theme";
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
-import { Grid3x3, Search, List, User, Building2, Plus, BookOpen } from "lucide-react";
+import { Grid3x3, Search, List, User, Building2, Plus, BookOpen, Loader2 } from "lucide-react";
 
-type Professor = {
-  id: number;
-  nome: string;
-  idade: string;
-  departamento: string;
-  turmas: number;
-  status: "ativo" | "inativo";
-};
-
-type Aluno = {
-  id: number;
-  nome: string;
-  idade: string;
-  turma: string;
-  disciplinas: number;
-  comportamento: "bom" | "ruim" | "excelente";
-};
-
-const normalizarTexto = (texto: string) =>
-  texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-const filtrarPorDepartamento = (lista: Professor[], departamento: string) =>
-  departamento === "Todos" ? lista : lista.filter((p) => p.departamento === departamento);
-
-const filtrarPorTurma = (lista: Aluno[], turma: string) =>
-  turma === "Todas" ? lista : lista.filter((a) => a.turma === turma);
+import { adminService, type UsuarioCard, type PageResponse } from "~/services/admin.service";
+import { alunoService } from "~/services/alunoService";
+import { professorService } from "~/services/professorService";
 
 export default function AdminRoute() {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -43,38 +18,61 @@ export default function AdminRoute() {
   const [selectedDepartment, setSelectedDepartment] = React.useState("Todos");
   const [selectedTurma, setSelectedTurma] = React.useState("Todas");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
+  const [currentPage, setCurrentPage] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const [usuarios, setUsuarios] = React.useState<PageResponse<UsuarioCard>>({
+    content: [],
+    totalElements: 0,
+    totalPages: 0,
+    size: 9,
+    number: 0,
+  });
 
   const departamentos = ["Todos", "Matemática", "Português", "Ciências", "História", "Geografia"];
   const turmas = ["Todas", "1º A", "1º B", "2º A", "2º B", "3º A"];
 
-  const professores: Professor[] = [
-    { id: 1, nome: "Carlos Almeida", idade: "35", departamento: "Matemática", turmas: 4, status: "ativo" },
-    { id: 2, nome: "Fernanda Ribeiro", idade: "42", departamento: "Português", turmas: 5, status: "ativo" },
-    { id: 3, nome: "Ricardo Souza", idade: "39", departamento: "História", turmas: 3, status: "inativo" },
-    { id: 4, nome: "Patrícia Gomes", idade: "33", departamento: "Ciências", turmas: 4, status: "ativo" },
-    { id: 5, nome: "Marcos Lima", idade: "45", departamento: "Geografia", turmas: 2, status: "ativo" },
-  ];
+  React.useEffect(() => {
+    carregarUsuarios();
+  }, [currentPage, selectedType, searchTerm, selectedDepartment, selectedTurma]);
 
-  const alunos: Aluno[] = [
-    { id: 1, nome: "João Silva", idade: "14", turma: "1º A", disciplinas: 12, comportamento: "excelente" },
-    { id: 2, nome: "Maria Santos", idade: "15", turma: "1º A", disciplinas: 12, comportamento: "bom" },
-    { id: 3, nome: "Pedro Oliveira", idade: "14", turma: "1º B", disciplinas: 12, comportamento: "ruim" },
-    { id: 4, nome: "Ana Costa", idade: "15", turma: "1º B", disciplinas: 12, comportamento: "excelente" },
-    { id: 5, nome: "Lucas Ferreira", idade: "16", turma: "2º A", disciplinas: 12, comportamento: "bom" },
-    { id: 6, nome: "Carla Souza", idade: "16", turma: "2º A", disciplinas: 12, comportamento: "excelente" },
-  ];
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentPage(0);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
-  const professoresFiltrados = React.useMemo(() => {
-    const filtrados = filtrarPorDepartamento(professores, selectedDepartment);
-    const termo = normalizarTexto(searchTerm);
-    return filtrados.filter((prof) => normalizarTexto(prof.nome).includes(termo));
-  }, [searchTerm, selectedDepartment]);
+  async function carregarUsuarios() {
+    setLoading(true);
+    setError(null);
 
-  const alunosFiltrados = React.useMemo(() => {
-    const filtrados = filtrarPorTurma(alunos, selectedTurma);
-    const termo = normalizarTexto(searchTerm);
-    return filtrados.filter((aluno) => normalizarTexto(aluno.nome).includes(termo));
-  }, [searchTerm, selectedTurma]);
+    try {
+      const response = await adminService.listarUsuarios({
+        page: currentPage,
+        size: 9,
+        tipo: selectedType === "professores" ? "PROFESSOR" : "ALUNO",
+        busca: searchTerm || undefined,
+      });
+
+      setUsuarios(response);
+    } catch (err: any) {
+      setError(err.message || 'Erro ao carregar usuários');
+      console.error('Erro ao carregar usuários:', err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const mapComportamento = (status: string): "bom" | "ruim" | "excelente" => {
+    switch (status?.toLowerCase()) {
+      case 'excelente': return 'excelente';
+      case 'bom': return 'bom';
+      case 'em risco': return 'ruim';
+      default: return 'bom';
+    }
+  };
 
   return (
     <>
@@ -196,167 +194,204 @@ export default function AdminRoute() {
 
         {/* Conteúdo principal */}
         <div className="flex-1 px-8 py-8 bg-background">
-          {selectedType === "professores" ? (
-            // PROFESSORES
-            professoresFiltrados.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-lg">Nenhum professor encontrado</p>
-              </div>
-            ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {professoresFiltrados.map((prof) => (
-                <Link key={prof.id} to={`/perfilProfessor?professorId=${prof.id}&from=admin`}>
-                  <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
-                    <CardHeader className="flex flex-col items-center w-full pb-2">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=prof${prof.id}`} />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                          {prof.nome.split(" ")[0][0]}
-                        </AvatarFallback>
-                      </Avatar>
-                    </CardHeader>
-
-                    <CardContent className="flex flex-col items-center w-full pt-0">
-                    <div className="space-y-1 w-full text-center">
-                      <CardTitle className="text-lg">{prof.nome}</CardTitle>
-                      <CardDescription className="text-muted-foreground text-sm">Idade: {prof.idade}</CardDescription>
-                      <p className="text-sm text-muted-foreground">Depto: {prof.departamento}</p>
-                    </div>
-
-                    <div className="text-muted-foreground text-sm flex items-center justify-center gap-1 mt-2">
-                      <Building2 className="h-4 w-4" /> {prof.turmas} turmas
-                    </div>
-
-                    <div className="mt-2">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          prof.status === "ativo" ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-600"
-                        }`}
-                      >
-                        {prof.status === "ativo" ? "Ativo" : "Inativo"}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-                </Link>
-              ))}
+          {/* Loading */}
+          {loading && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Carregando...</span>
             </div>
-          ) : (
-            <div className="space-y-3">
-              {professoresFiltrados.map((prof) => (
-                <Link key={prof.id} to={`/perfilProfessor?professorId=${prof.id}&from=admin`}>
-                  <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=prof${prof.id}`} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {prof.nome.split(" ")[0][0]}
-                        </AvatarFallback>
-                      </Avatar>
+          )}
 
-                      <div className="flex-1">
-                        <p className="font-semibold text-foreground">{prof.nome}</p>
-                        <div className="flex gap-4 text-xs text-muted-foreground">
-                          <span>{prof.departamento}</span>
-                          <span className="flex items-center gap-1"><User className="h-3 w-3" /> {prof.idade} anos</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          prof.status === "ativo" ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-600"
-                        }`}
-                      >
-                        {prof.status === "ativo" ? "Ativo" : "Inativo"}
-                      </span>
-
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Building2 className="h-4 w-4" />
-                        {prof.turmas}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+          {/* Erro */}
+          {error && !loading && (
+            <div className="bg-destructive/10 border border-destructive text-destructive px-4 py-3 rounded-md mb-4">
+              {error}
             </div>
-          )
-        ) : (
-          // ALUNOS
-          alunosFiltrados.length === 0 ? (
+          )}
+
+          {/* Sem resultados */}
+          {!loading && !error && usuarios.content.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">Nenhum aluno encontrado</p>
+              <p className="text-muted-foreground text-lg">
+                Nenhum {selectedType === "professores" ? "professor" : "aluno"} encontrado
+              </p>
             </div>
-          ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {alunosFiltrados.map((aluno) => (
-                <Link key={aluno.id} to={`/perfilAluno?alunoId=${aluno.id}&from=admin`}>
-                  <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
-                    <CardHeader className="flex flex-col items-center w-full pb-2">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${aluno.id}`} />
-                        <AvatarFallback className="bg-primary text-primary-foreground text-lg">
-                          {aluno.nome.split(" ")[0][0]}
-                        </AvatarFallback>
-                      </Avatar>
-                    </CardHeader>
+          )}
 
-                    <CardContent className="flex flex-col items-center w-full pt-0">
-                      <div className="space-y-1 w-full text-center">
-                        <CardTitle className="text-lg">{aluno.nome}</CardTitle>
-                        <CardDescription className="text-muted-foreground text-sm">Idade: {aluno.idade}</CardDescription>
-                        <p className="text-sm text-muted-foreground">Turma: {aluno.turma}</p>
-                      </div>
-
-                      <CardDescription className="text-muted-foreground text-sm flex items-center justify-center gap-1 mt-2">
-                        <BookOpen className="h-3 w-3" />
-                        {aluno.disciplinas} Disciplinas
-                      </CardDescription>
-                      
-                      <div className="flex justify-center mt-2">
-                        <ComportamentoTag tipo={aluno.comportamento} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {alunosFiltrados.map((aluno) => (
-                <Link key={aluno.id} to={`/perfilAluno?alunoId=${aluno.id}&from=admin`}>
-                  <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
-                    <div className="flex items-center gap-4 flex-1">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${aluno.id}`} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">
-                          {aluno.nome.split(" ")[0][0]}
-                        </AvatarFallback>
-                      </Avatar>
-
-                      <div className="flex-1">
-                        <p className="font-semibold text-foreground">{aluno.nome}</p>
-                        <div className="flex gap-4 text-xs text-muted-foreground">
-                          <span>{aluno.turma}</span>
-                          <span className="flex items-center gap-1"><User className="h-3 w-3" /> {aluno.idade} anos</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3">
-                      <ComportamentoTag tipo={aluno.comportamento} />
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <BookOpen className="h-4 w-4" />
-                        {aluno.disciplinas}
-                      </div>
-                    </div>
+          {/* Grid/Lista de Usuários */}
+          {!loading && !error && usuarios.content.length > 0 && (
+            <>
+              {selectedType === "professores" ? (
+                // PROFESSORES
+                viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {usuarios.content.map((usuario) => (
+                      <Link key={usuario.id} to={`/perfilProfessor?professorId=${usuario.id}&from=admin`}>
+                        <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
+                          <CardHeader className="flex flex-col items-center w-full pb-2">
+                            <Avatar className="h-16 w-16">
+                              <AvatarImage src={professorService.getFotoUrl(usuario.foto)} />
+                              <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                                {usuario.nome.split(" ")[0][0]}
+                              </AvatarFallback>
+                            </Avatar>
+                          </CardHeader>
+                          <CardContent className="flex flex-col items-center w-full pt-0">
+                            <div className="space-y-1 w-full text-center">
+                              <CardTitle className="text-lg">{usuario.nome}</CardTitle>
+                              <CardDescription className="text-muted-foreground text-sm">
+                                {usuario.idade ? `Idade: ${usuario.idade}` : 'Idade não informada'}
+                              </CardDescription>
+                            </div>
+                            <div className="text-muted-foreground text-sm flex items-center justify-center gap-1 mt-2">
+                              <Building2 className="h-4 w-4" /> {usuario.totalTurmas || 0} turmas
+                            </div>
+                            <div className="mt-2">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                usuario.status?.toLowerCase() === "ativo" ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-600"
+                              }`}>
+                                {usuario.status || 'Ativo'}
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
                   </div>
-                </Link>
-              ))}
-            </div>
-          )
-        )}
+                ) : (
+                  <div className="space-y-3">
+                    {usuarios.content.map((usuario) => (
+                      <Link key={usuario.id} to={`/perfilProfessor?professorId=${usuario.id}&from=admin`}>
+                        <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
+                          <div className="flex items-center gap-4 flex-1">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={professorService.getFotoUrl(usuario.foto)} />
+                              <AvatarFallback className="bg-primary text-primary-foreground">
+                                {usuario.nome.split(" ")[0][0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <p className="font-semibold text-foreground">{usuario.nome}</p>
+                              <div className="flex gap-4 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <User className="h-3 w-3" /> 
+                                  {usuario.idade ? `${usuario.idade} anos` : 'Idade não informada'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              usuario.status?.toLowerCase() === "ativo" ? "bg-green-500/15 text-green-600" : "bg-red-500/15 text-red-600"
+                            }`}>
+                              {usuario.status || 'Ativo'}
+                            </span>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              <Building2 className="h-4 w-4" />
+                              {usuario.totalTurmas || 0}
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )
+              ) : (
+                // ALUNOS
+                viewMode === "grid" ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {usuarios.content.map((usuario) => (
+                      <Link key={usuario.id} to={`/perfilAluno?alunoId=${usuario.id}&from=admin`}>
+                        <Card className="hover:shadow-lg transition-shadow border-border flex flex-col items-center text-center cursor-pointer">
+                          <CardHeader className="flex flex-col items-center w-full pb-2">
+                            <Avatar className="h-16 w-16">
+                              <AvatarImage src={alunoService.getFotoUrl(usuario.foto)} />
+                              <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+                                {usuario.nome.split(" ")[0][0]}
+                              </AvatarFallback>
+                            </Avatar>
+                          </CardHeader>
+                          <CardContent className="flex flex-col items-center w-full pt-0">
+                            <div className="space-y-1 w-full text-center">
+                              <CardTitle className="text-lg">{usuario.nome}</CardTitle>
+                              <CardDescription className="text-muted-foreground text-sm">
+                                {usuario.idade ? `Idade: ${usuario.idade}` : 'Idade não informada'}
+                              </CardDescription>
+                            </div>
+                            <div className="flex justify-center mt-2">
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                usuario.status?.toLowerCase() === "matriculado" ? "bg-green-500/15 text-green-600" : "bg-yellow-500/15 text-yellow-600"
+                              }`}>
+                                {usuario.status || 'Matriculado'}
+                              </span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {usuarios.content.map((usuario) => (
+                      <Link key={usuario.id} to={`/perfilAluno?alunoId=${usuario.id}&from=admin`}>
+                        <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg hover:shadow-lg transition-shadow cursor-pointer">
+                          <div className="flex items-center gap-4 flex-1">
+                            <Avatar className="h-12 w-12">
+                              <AvatarImage src={alunoService.getFotoUrl(usuario.foto)} />
+                              <AvatarFallback className="bg-primary text-primary-foreground">
+                                {usuario.nome.split(" ")[0][0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="flex-1">
+                              <p className="font-semibold text-foreground">{usuario.nome}</p>
+                              <div className="flex gap-4 text-xs text-muted-foreground">
+                                <span className="flex items-center gap-1">
+                                  <User className="h-3 w-3" /> 
+                                  {usuario.idade ? `${usuario.idade} anos` : 'Idade não informada'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                              usuario.status?.toLowerCase() === "matriculado" ? "bg-green-500/15 text-green-600" : "bg-yellow-500/15 text-yellow-600"
+                            }`}>
+                              {usuario.status || 'Matriculado'}
+                            </span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )
+              )}
+
+              {/* Paginação */}
+              {usuarios.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-8">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.max(0, p - 1))}
+                    disabled={currentPage === 0}
+                  >
+                    Anterior
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Página {currentPage + 1} de {usuarios.totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage(p => Math.min(usuarios.totalPages - 1, p + 1))}
+                    disabled={currentPage >= usuarios.totalPages - 1}
+                  >
+                    Próxima
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
         </div>
       </section>
     </>

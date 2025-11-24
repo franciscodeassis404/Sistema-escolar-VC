@@ -28,7 +28,7 @@ interface ListarAlunosParams {
 
 export const alunoService = {
   listar: async (params: ListarAlunosParams): Promise<PageResponse<AlunoCard>> => {
-    // ✅ Usando o endpoint correto
+    
     const response = await apiClient.get<PageResponse<AlunoCard>>(
       '/professor/dashboard/alunos',
       {

@@ -1,4 +1,3 @@
-import type { Route } from "./+types/login";
 import * as React from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
@@ -195,7 +194,7 @@ function LoginForm({
   );
 }
 
-export function meta({}: Route.MetaArgs) {
+export function meta() {
   return [
     { title: "Login" },
     { name: "description", content: "Realize seu login" },
