@@ -1,6 +1,10 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+// ❌ ANTES:
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+// ✅ DEPOIS (para Vite/React Router):
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface LoginRequest {
   email: string;
@@ -20,6 +24,7 @@ export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     try {
       console.log('🔄 Fazendo login com:', credentials.email);
+      console.log('🌐 API URL:', API_BASE_URL); // Para debug
 
       const response = await axios.post<LoginResponse>(
         `${API_BASE_URL}/auth/login`,
@@ -27,6 +32,7 @@ export const authService = {
         {
           headers: {
             'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true', // 👈 ADICIONE ISTO
           },
           timeout: 10000,
         }
@@ -34,7 +40,6 @@ export const authService = {
 
       console.log('✅ Login bem-sucedido:', response.data);
 
-      // Salvar token e dados do usuário
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data));
 
