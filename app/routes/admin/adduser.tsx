@@ -4,6 +4,28 @@ import { Link, useNavigate } from "react-router";
 import { Navbar } from "~/components/ui/navbar";
 import { adminService, type NovoUsuario } from "~/services/admin.service";
 
+// Lista de turmas disponíveis
+const TURMAS = [
+  { id: 1, nome: "7º A" },
+  { id: 2, nome: "7º B" },
+  { id: 3, nome: "7º C" },
+  { id: 4, nome: "8º A" },
+  { id: 5, nome: "8º B" },
+  { id: 6, nome: "8º C" },
+  { id: 7, nome: "9º A" },
+  { id: 8, nome: "9º B" },
+  { id: 9, nome: "9º C" },
+  { id: 10, nome: "1º A" },
+  { id: 11, nome: "1º B" },
+  { id: 12, nome: "1º C" },
+  { id: 13, nome: "2º A" },
+  { id: 14, nome: "2º B" },
+  { id: 15, nome: "2º C" },
+  { id: 16, nome: "3º A" },
+  { id: 17, nome: "3º B" },
+  { id: 18, nome: "3º C" },
+];
+
 export default function AddUser() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -252,6 +274,7 @@ export default function AddUser() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                autoComplete="off"
                 className="mt-1 w-full p-3 bg-background border border-border rounded-md outline-none focus:ring-2 focus:ring-primary text-foreground"
                 required
                 disabled={loading}
@@ -285,24 +308,11 @@ export default function AddUser() {
                     disabled={loading}
                   >
                     <option value="">Selecione a turma...</option>
-                    <option value="1">7º A</option>
-                    <option value="2">7º B</option>
-                    <option value="3">7º C</option>
-                    <option value="4">8º A</option>
-                    <option value="5">8º B</option>
-                    <option value="6">8º C</option>
-                    <option value="7">9º A</option>
-                    <option value="8">9º B</option>
-                    <option value="9">9º C</option>
-                    <option value="10">1º A</option>
-                    <option value="11">1º B</option>
-                    <option value="12">1º C</option>
-                    <option value="13">2º A</option>
-                    <option value="14">2º B</option>
-                    <option value="15">2º C</option>
-                    <option value="16">3º A</option>
-                    <option value="17">3º B</option>
-                    <option value="18">3º C</option>
+                    {TURMAS.map((turma) => (
+                      <option key={turma.id} value={turma.id}>
+                        {turma.nome}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </>
@@ -349,6 +359,7 @@ export default function AddUser() {
                 name="senha"
                 value={formData.senha}
                 onChange={handleChange}
+                autoComplete="new-password"
                 className="mt-1 w-full p-3 bg-background border border-border rounded-md outline-none focus:ring-2 focus:ring-primary text-foreground"
                 placeholder="Mínimo 6 caracteres"
                 required
@@ -372,6 +383,7 @@ export default function AddUser() {
                 name="confirmarSenha"
                 value={formData.confirmarSenha}
                 onChange={handleChange}
+                autoComplete="new-password"
                 className="mt-1 w-full p-3 bg-background border border-border rounded-md outline-none focus:ring-2 focus:ring-primary text-foreground"
                 required
                 disabled={loading}

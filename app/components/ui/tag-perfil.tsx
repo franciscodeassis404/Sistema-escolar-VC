@@ -4,18 +4,40 @@ import {Users, Shield, GraduationCap} from "lucide-react";
 
 type TagPerfilProps = {
     tipo?: "aluno" | "professor" | "admin";
+    nomeUsuario?: string;
     className?: string;
 } & React.ComponentProps<"div">;
 
-const TagPerfil = ({ tipo = "professor", className, ...props }: TagPerfilProps) => {
+const TagPerfil = ({ tipo = "professor", nomeUsuario, className, ...props }: TagPerfilProps) => {
+    
+    const formatarNome = (nome: string | undefined, tipo: string) => {
+        if (!nome) {
+            return tipo === "admin" ? "Admin" : tipo === "professor" ? "Professor" : "Aluno";
+        }
+        
+        if (tipo === "admin") {
+            return "Admin";
+        }
+        
+        // Remove "Prof.", "Profa.", "Professor", "Professora" se já vier no nome
+        const nomeLimpo = nome.replace(/^(Prof\.|Profa\.|Professor|Professora)\s*/i, '').trim();
+        const primeiroNome = nomeLimpo.split(" ")[0];
+        
+        if (tipo === "professor") {
+            return `Prof. ${primeiroNome}`;
+        }
+        
+        return primeiroNome;
+    };
+
     const config = {
         aluno: {
             icon: Users,
-            label: "Aluno"
+            label: formatarNome(nomeUsuario, "aluno")
         },
         professor: {
             icon: GraduationCap,
-            label: "Prof. Leonardo"
+            label: formatarNome(nomeUsuario, "professor")
         },
         admin: {
             icon: Shield,

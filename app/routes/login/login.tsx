@@ -156,7 +156,12 @@ function LoginForm({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="seu@email.com" type="email" {...field} />
+                      <Input 
+                        placeholder="seu@email.com" 
+                        type="email" 
+                        autoComplete="off"
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -170,7 +175,11 @@ function LoginForm({
                   <FormItem>
                     <FormLabel>Senha</FormLabel>
                     <FormControl>
-                      <PasswordInput placeholder="••••••••" {...field} />
+                      <PasswordInput 
+                        placeholder="••••••••" 
+                        autoComplete="new-password"
+                        {...field} 
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

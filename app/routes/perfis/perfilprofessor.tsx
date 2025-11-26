@@ -187,10 +187,6 @@ export default function PerfilProfessorRoute() {
                   <p className="text-sm font-medium text-foreground">{professor.email}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-muted-foreground mb-1">Telefone</p>
-                  <p className="text-sm font-medium text-foreground">
-                    {professor.telefone || 'Não informado'}
-                  </p>
                 </div>
               </div>
             </div>

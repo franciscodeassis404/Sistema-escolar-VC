@@ -8,6 +8,7 @@ import ThemeToggle from "./theme";
 
 import { LogOut } from "lucide-react";
 import LogoutModal from "../ui/LogoutModal";
+import { authService } from "~/services/auth.service";
 
 type NavbarProps = {
   tipoPerfil?: "aluno" | "professor" | "admin";
@@ -19,6 +20,9 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
 
   // estado do modal
   const [showLogout, setShowLogout] = React.useState(false);
+  
+  // Pega os dados do usuário logado
+  const user = authService.getUser();
 
   // ação de confirmação
   function handleConfirmLogout() {
@@ -44,7 +48,7 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <TagPerfil tipo={tipoPerfil} />
+          <TagPerfil tipo={tipoPerfil} nomeUsuario={user?.nome} />
 
           <Button
             variant="outline"
