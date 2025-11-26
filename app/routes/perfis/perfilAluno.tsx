@@ -30,11 +30,20 @@ export default function PerfilAlunoRoute() {
     setError(null);
 
     try {
+      console.log('🔍 Tentando carregar perfil do aluno:', alunoId);
       const dados = await perfilService.buscarPerfilAluno(Number(alunoId));
+      console.log('✅ Dados do aluno recebidos:', dados);
       setAluno(dados);
     } catch (err: any) {
-      setError(err.message || 'Erro ao carregar perfil do aluno');
-      console.error('Erro ao carregar perfil:', err);
+      console.error('❌ Erro detalhado ao carregar perfil:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        stack: err.stack
+      });
+      
+      const mensagemErro = err.response?.data?.message || err.message || 'Erro ao carregar perfil do aluno';
+      setError(mensagemErro);
     } finally {
       setLoading(false);
     }

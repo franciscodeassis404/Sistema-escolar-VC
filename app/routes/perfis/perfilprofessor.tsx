@@ -29,11 +29,20 @@ export default function PerfilProfessorRoute() {
     setError(null);
 
     try {
+      console.log('🔍 Tentando carregar perfil do professor:', professorId);
       const dados = await perfilService.buscarPerfilProfessor(Number(professorId));
+      console.log('✅ Dados do professor recebidos:', dados);
       setProfessor(dados);
     } catch (err: any) {
-      setError(err.message || 'Erro ao carregar perfil do professor');
-      console.error('Erro ao carregar perfil:', err);
+      console.error('❌ Erro detalhado ao carregar perfil:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        stack: err.stack
+      });
+      
+      const mensagemErro = err.response?.data?.message || err.message || 'Erro ao carregar perfil do professor';
+      setError(mensagemErro);
     } finally {
       setLoading(false);
     }
