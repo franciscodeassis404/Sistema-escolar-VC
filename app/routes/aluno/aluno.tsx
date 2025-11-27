@@ -51,24 +51,24 @@ export default function AlunoDashboard() {
         } transition-colors duration-500`}
       >
         <div className="min-h-screen w-full bg-[#F4F7FA] dark:bg-[#0D1117] dark:text-white transition-colors duration-500">
-  
+
           {/* NAVBAR AQUI */}
           <Navbar />
-  
+
           {/* CONTEÚDO */}
           <div className="px-10 py-10 animate-fadeIn">
-  
+
             <h1 className="text-3xl font-bold animate-fadeIn">
               Bem-vindo, {student.nome.split(" ")[0]}!
             </h1>
-  
+
             <p className="text-gray-600 dark:text-gray-300 mt-1 animate-fadeIn">
               Aqui você pode visualizar suas informações e notas de comportamento
             </p>
-  
+
             {/* GRID */}
             <div className="grid grid-cols-4 gap-10 mt-10 items-start">
-  
+
               {/* COLUNA ESQUERDA */}
               <div className="col-span-1 animate-fadeIn">
                 <div
@@ -86,15 +86,15 @@ export default function AlunoDashboard() {
                     src={student.foto}
                     className="w-28 h-28 rounded-full mx-auto border-4 border-blue-400 shadow-lg animate-fadeIn"
                   />
-  
+
                   <h2 className="text-xl font-semibold mt-4 animate-fadeIn">
                     {student.nome}
                   </h2>
-  
+
                   <p className="text-sm text-gray-500 dark:text-gray-300 animate-fadeIn">
                     {student.turma}
                   </p>
-  
+
                   <div
                     className={`
                       mt-3 text-white rounded-full px-4 py-1 text-sm font-medium pulse animate-fadeIn
@@ -104,17 +104,17 @@ export default function AlunoDashboard() {
                     {student.statusComportamento.charAt(0).toUpperCase() +
                       student.statusComportamento.slice(1)}
                   </div>
-  
+
                   <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-600 dark:text-gray-300 animate-fadeIn">
                     <BookOpen className="w-4 h-4" />
                     {student.disciplinas.length} disciplinas
                   </div>
                 </div>
               </div>
-  
+
               {/* COLUNA DIREITA */}
               <div className="col-span-3 flex flex-col gap-10 animate-fadeIn">
-  
+
                 {/* INFORMAÇÕES PESSOAIS */}
                 <div
                   className="
@@ -129,25 +129,25 @@ export default function AlunoDashboard() {
                     <Info className="w-5 h-5 text-blue-600" />
                     Informações pessoais
                   </h2>
-  
+
                   <div className="grid grid-cols-3 gap-4 mt-4 animate-fadeIn">
-  
+
                     <div>
                       <p className="text-gray-500 dark:text-gray-300 text-sm">Idade</p>
                       <p className="font-semibold">{student.idade} anos</p>
-  
+
                       <p className="text-gray-500 dark:text-gray-300 text-sm mt-4">
                         ID do aluno
                       </p>
                       <p className="font-semibold">{student.id}</p>
                     </div>
-  
+
                     <div>
                       <p className="text-gray-500 dark:text-gray-300 text-sm">Turma</p>
                       <p className="font-semibold">{student.turma}</p>
-  
+
                       <p className="text-gray-500 dark:text-gray-300 text-sm mt-4">Status</p>
-  
+
                       <span
                         className={`
                           px-3 py-1 text-white rounded-full text-sm font-medium
@@ -163,10 +163,10 @@ export default function AlunoDashboard() {
                           : "Não matriculado"}
                       </span>
                     </div>
-  
+
                   </div>
                 </div>
-  
+
                 {/* DISCIPLINAS */}
                 <div
                   className="
@@ -181,7 +181,7 @@ export default function AlunoDashboard() {
                     <User className="w-5 h-5 text-blue-600" />
                     Minhas disciplinas
                   </h2>
-  
+
                   <div className="grid grid-cols-3 gap-3 animate-fadeIn">
                     {student.disciplinas.map((disciplina, index) => (
                       <div
@@ -200,7 +200,7 @@ export default function AlunoDashboard() {
                     ))}
                   </div>
                 </div>
-  
+
                 {/* HISTÓRICO DE COMPORTAMENTO */}
                 <div
                   className="
@@ -215,7 +215,7 @@ export default function AlunoDashboard() {
                     <Info className="w-5 h-5 text-blue-600" />
                     Histórico de comportamento
                   </h2>
-  
+
                   <div className="flex flex-col gap-4 animate-fadeIn">
                     {student.comportamentoHistorico.map((item, index) => (
                       <div
@@ -233,7 +233,7 @@ export default function AlunoDashboard() {
                             {item.meses}
                           </p>
                         </div>
-  
+
                         <span
                           className={`
                             px-3 py-1 text-white rounded-full text-sm font-medium
@@ -246,7 +246,7 @@ export default function AlunoDashboard() {
                     ))}
                   </div>
                 </div>
-  
+
               </div>
             </div>
           </div>
@@ -254,4 +254,3 @@ export default function AlunoDashboard() {
       </main>
     );
   }
-  

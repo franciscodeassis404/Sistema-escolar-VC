@@ -13,9 +13,8 @@ export default function AddUser() {
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
 
-  // Estados do formulário
   const [formData, setFormData] = useState({
-    tipo: "",
+    tipo: "ALUNO",
     nomeCompleto: "",
     email: "",
     senha: "",
@@ -53,8 +52,14 @@ export default function AddUser() {
     setSuccess(false);
 
     try {
-      // Validações
-      if (!formData.tipo || !formData.nomeCompleto || !formData.email || !formData.senha) {
+      console.log('Dados do formulário:', formData);
+
+      // ✅ Validações básicas
+      if (!formData.tipo) {
+        throw new Error("Selecione o tipo de usuário");
+      }
+
+      if (!formData.nomeCompleto || !formData.email || !formData.senha) {
         throw new Error("Preencha todos os campos obrigatórios");
       }
 
@@ -66,13 +71,14 @@ export default function AddUser() {
         throw new Error("A senha deve ter no mínimo 6 caracteres");
       }
 
-      // Preparar dados conforme o tipo de usuário
+
       let dadosUsuario: NovoUsuario;
 
       if (formData.tipo === "ALUNO") {
         if (!formData.turma || !formData.dataNascimento) {
           throw new Error("Preencha turma e data de nascimento para alunos");
         }
+
         dadosUsuario = {
           tipo: "ALUNO",
           nomeCompleto: formData.nomeCompleto,
@@ -86,6 +92,7 @@ export default function AddUser() {
         if (!formData.matricula || !formData.especialidade) {
           throw new Error("Preencha matrícula e especialidade para professores");
         }
+
         dadosUsuario = {
           tipo: "PROFESSOR",
           nomeCompleto: formData.nomeCompleto,
@@ -96,6 +103,7 @@ export default function AddUser() {
           especialidade: formData.especialidade,
         };
       } else {
+        // Admin
         dadosUsuario = {
           tipo: "ADMIN",
           nomeCompleto: formData.nomeCompleto,
@@ -105,11 +113,14 @@ export default function AddUser() {
         };
       }
 
+      console.log('📤 Enviando dados:', dadosUsuario);
+
       // Enviar para o backend
       await adminService.createUsuario(dadosUsuario);
 
+      console.log('✅ Usuário criado com sucesso!');
       setSuccess(true);
-      
+
       // Redirecionar após 2 segundos
       setTimeout(() => {
         navigate("/admin");
@@ -117,16 +128,12 @@ export default function AddUser() {
 
     } catch (err) {
       console.error("Erro no cadastro:", err);
-      
-      let errorMessage = "Erro ao cadastrar usuário";
-      
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:8080";
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erro ao cadastrar usuário");
       }
-      
-      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -167,51 +174,6 @@ export default function AddUser() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
-            {/* Foto do usuário */}
-            <div>
-              <label className="font-medium text-foreground block mb-2">Foto do usuário</label>
-              <div className="flex items-center gap-4">
-                {photoPreview ? (
-                  <div className="relative">
-                    <img 
-                      src={photoPreview} 
-                      alt="Preview" 
-                      className="w-24 h-24 rounded-full object-cover border-2 border-border"
-                    />
-                    <button
-                      type="button"
-                      onClick={removePhoto}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                    >
-                      <X size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center">
-                    <Upload className="w-8 h-8 text-muted-foreground" />
-                  </div>
-                )}
-                <div className="flex-1">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handlePhotoChange}
-                    className="hidden"
-                    id="photo-upload"
-                  />
-                  <label
-                    htmlFor="photo-upload"
-                    className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors"
-                  >
-                    Escolher foto
-                  </label>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    Formatos aceitos: JPG, PNG, GIF (máx. 5MB)
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Tipo de usuário */}
             <div>
               <label className="font-medium text-foreground">Tipo de usuário*</label>
@@ -223,7 +185,6 @@ export default function AddUser() {
                 required
                 disabled={loading}
               >
-                <option value="">Selecione...</option>
                 <option value="ALUNO">Aluno</option>
                 <option value="PROFESSOR">Professor</option>
                 <option value="ADMIN">Administrador</option>
@@ -287,22 +248,8 @@ export default function AddUser() {
                     <option value="">Selecione a turma...</option>
                     <option value="1">7º A</option>
                     <option value="2">7º B</option>
-                    <option value="3">7º C</option>
-                    <option value="4">8º A</option>
-                    <option value="5">8º B</option>
-                    <option value="6">8º C</option>
-                    <option value="7">9º A</option>
-                    <option value="8">9º B</option>
-                    <option value="9">9º C</option>
-                    <option value="10">1º A</option>
-                    <option value="11">1º B</option>
-                    <option value="12">1º C</option>
-                    <option value="13">2º A</option>
-                    <option value="14">2º B</option>
-                    <option value="15">2º C</option>
-                    <option value="16">3º A</option>
-                    <option value="17">3º B</option>
-                    <option value="18">3º C</option>
+                    <option value="3">8º A</option>
+                    <option value="4">9º A</option>
                   </select>
                 </div>
               </>
@@ -387,8 +334,6 @@ export default function AddUser() {
 
             {/* BOTÕES */}
             <div className="flex items-center justify-between pt-4 gap-4">
-
-              {/* Cancelar */}
               <Link
                 to="/admin"
                 className="w-[48%] py-3 border border-border rounded-md text-center font-medium bg-background hover:bg-accent transition-colors text-foreground"
@@ -396,7 +341,6 @@ export default function AddUser() {
                 Cancelar
               </Link>
 
-              {/* Adicionar */}
               <button
                 type="submit"
                 disabled={loading}
@@ -404,7 +348,6 @@ export default function AddUser() {
               >
                 {loading ? "Cadastrando..." : "Adicionar"}
               </button>
-
             </div>
 
           </form>
