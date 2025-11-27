@@ -40,17 +40,38 @@ export default function AlunoDashboard() {
     try {
       const user = authService.getUser();
       
+      console.log('👤 Dados do usuário no localStorage:', user);
+      
       if (!user || !user.idUsuario) {
-        throw new Error('Usuário não autenticado');
+        console.error('⚠️ Usuário não encontrado ou sem ID');
+        throw new Error('Usuário não autenticado. Faça login novamente.');
       }
 
-      console.log('🔍 Carregando perfil do aluno logado (ID:', user.idUsuario, ')');
+      console.log('🔍 Carregando perfil do aluno logado');
+      console.log('📋 ID do usuário:', user.idUsuario);
+      console.log('📧 Email:', user.email);
+      console.log('👔 Perfil:', user.perfil);
+      
       const dados = await perfilService.buscarPerfilAluno(user.idUsuario);
-      console.log('✅ Perfil do aluno carregado:', dados);
+      console.log('✅ Perfil do aluno carregado com sucesso:', dados);
       setStudent(dados);
     } catch (err: any) {
-      console.error('❌ Erro ao carregar perfil:', err);
-      setError(err.message || 'Erro ao carregar perfil');
+      console.error('❌ Erro completo ao carregar perfil:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        erro: err
+      });
+      
+      let mensagemErro = err.message || 'Erro ao carregar perfil';
+      
+      if (err.response?.status === 404) {
+        mensagemErro = 'Perfil do aluno não encontrado no sistema';
+      } else if (err.response?.status === 500) {
+        mensagemErro = 'Erro no servidor ao buscar perfil';
+      }
+      
+      setError(mensagemErro);
     } finally {
       setLoading(false);
     }
