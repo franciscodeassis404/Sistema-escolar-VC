@@ -1,14 +1,17 @@
+// app/routes/admin/adduser.tsx
 import { ArrowLeft, Eye, EyeOff, Upload, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Navbar } from "~/components/ui/navbar";
 import { adminService, type NovoUsuario } from "~/services/admin.service";
+import { uploadService } from "~/services/uploadService"; // 👈 NOVO
 
 export default function AddUser() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null); // 👈 NOVO
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
@@ -33,6 +36,10 @@ export default function AddUser() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Salvar o arquivo para upload posterior
+      setPhotoFile(file);
+
+      // Mostrar preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result as string);
@@ -43,6 +50,7 @@ export default function AddUser() {
 
   const removePhoto = () => {
     setPhotoPreview(null);
+    setPhotoFile(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,9 +60,7 @@ export default function AddUser() {
     setSuccess(false);
 
     try {
-      console.log('Dados do formulário:', formData);
-
-      // ✅ Validações básicas
+      // Validações básicas
       if (!formData.tipo) {
         throw new Error("Selecione o tipo de usuário");
       }
@@ -70,7 +76,6 @@ export default function AddUser() {
       if (formData.senha.length < 6) {
         throw new Error("A senha deve ter no mínimo 6 caracteres");
       }
-
 
       let dadosUsuario: NovoUsuario;
 
@@ -103,7 +108,6 @@ export default function AddUser() {
           especialidade: formData.especialidade,
         };
       } else {
-        // Admin
         dadosUsuario = {
           tipo: "ADMIN",
           nomeCompleto: formData.nomeCompleto,
@@ -113,12 +117,25 @@ export default function AddUser() {
         };
       }
 
-      console.log('📤 Enviando dados:', dadosUsuario);
+      console.log('📤 Criando usuário:', dadosUsuario);
 
-      // Enviar para o backend
-      await adminService.createUsuario(dadosUsuario);
+      // 1️⃣ PRIMEIRO: Criar o usuário
+      const usuarioCriado = await adminService.createUsuario(dadosUsuario);
+      console.log('✅ Usuário criado:', usuarioCriado);
 
-      console.log('✅ Usuário criado com sucesso!');
+      // 2️⃣ DEPOIS: Se tem foto E é aluno, fazer upload
+      if (photoFile && usuarioCriado.id && formData.tipo === "ALUNO") {
+        console.log('📸 Fazendo upload da foto...');
+        try {
+          await uploadService.uploadFotoAluno(usuarioCriado.id, photoFile);
+          console.log('✅ Foto enviada com sucesso!');
+        } catch (uploadError) {
+          console.error('⚠️ Erro ao enviar foto:', uploadError);
+          // Não falha a criação do usuário, apenas avisa
+          setError('Usuário criado, mas houve erro ao enviar a foto. Você pode adicionar depois.');
+        }
+      }
+
       setSuccess(true);
 
       // Redirecionar após 2 segundos
@@ -173,6 +190,51 @@ export default function AddUser() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
+
+            {/* Foto do usuário */}
+            <div>
+              <label className="font-medium text-foreground block mb-2">Foto do usuário</label>
+              <div className="flex items-center gap-4">
+                {photoPreview ? (
+                  <div className="relative">
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
+                      className="w-24 h-24 rounded-full object-cover border-2 border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-muted border-2 border-dashed border-border flex items-center justify-center">
+                    <Upload className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                )}
+                <div className="flex-1">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    className="hidden"
+                    id="photo-upload"
+                  />
+                  <label
+                    htmlFor="photo-upload"
+                    className="inline-block px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 transition-colors"
+                  >
+                    Escolher foto
+                  </label>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Formatos aceitos: JPG, PNG, GIF (máx. 5MB)
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* Tipo de usuário */}
             <div>
