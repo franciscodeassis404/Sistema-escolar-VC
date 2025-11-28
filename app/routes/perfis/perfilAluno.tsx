@@ -123,24 +123,24 @@ export default function PerfilAlunoRoute() {
   return (
     <div className="min-h-screen bg-background dark:bg-gray-900">
       {/* Navbar */}
-      <nav className="w-full bg-card dark:bg-gray-800 border-b border-border px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+      <nav className="w-full bg-card dark:bg-gray-800 border-b border-border px-4 sm:px-6 md:px-8 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-6 min-w-0">
           <button
             onClick={() => navigate(`/${from}`)}
-            className="p-2 hover:bg-accent rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors shrink-0"
             title="Voltar"
           >
-            <ArrowLeft className="w-5 h-5 text-muted-foreground" />
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <img
               src={perfilService.getFotoUrl(aluno.foto, 'aluno')}
               alt={aluno.nome}
-              className="w-10 h-10 rounded-full"
+              className="w-8 h-8 sm:w-10 sm:h-10 rounded-full shrink-0"
             />
-            <div>
-              <p className="text-sm font-semibold text-foreground">Perfil do Aluno</p>
-              <p className="text-xs text-muted-foreground">{aluno.nome}</p>
+            <div className="min-w-0">
+              <p className="text-xs sm:text-sm font-semibold text-foreground truncate">Perfil do Aluno</p>
+              <p className="text-xs text-muted-foreground truncate">{aluno.nome}</p>
             </div>
           </div>
         </div>
@@ -148,84 +148,82 @@ export default function PerfilAlunoRoute() {
         {from === 'admin' && (
           <button
             onClick={() => console.log('Editar aluno', alunoId)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shrink-0 text-xs sm:text-sm"
             title="Editar perfil"
           >
-            <Pencil className="w-4 h-4" />
-            Editar
+            <Pencil className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Editar</span>
           </button>
         )}
       </nav>
 
-      <div className="px-8 py-8 h-[calc(100vh-4rem)]">
+      <div className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 min-h-[calc(100vh-4rem)] flex flex-col">
         {/* Título */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-1 sm:mb-2">
             Perfil do Aluno
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Aqui você pode visualizar as informações e notas de comportamento do aluno
           </p>
         </div>
 
-        <div className="grid grid-cols-12 gap-6 h-[calc(100%-8rem)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 flex-1">
           {/* Sidebar */}
-          <div className="col-span-3 h-full">
-            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6 flex flex-col items-center h-full">
+          <div className="md:col-span-1">
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-4 sm:p-6 flex flex-col items-center h-full sticky top-4">
               <img
                 src={perfilService.getFotoUrl(aluno.foto, 'aluno')}
                 alt={aluno.nome}
-                className="w-24 h-24 rounded-full mb-4 border-4 border-primary/20"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full mb-3 sm:mb-4 border-4 border-primary/20"
               />
               
-              <h2 className="text-lg font-semibold text-foreground text-center mb-1">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground text-center mb-1 line-clamp-2">
                 {aluno.nome}
               </h2>
               
-              <p className="text-sm text-muted-foreground mb-3">{aluno.turma}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground mb-3 truncate">{aluno.turma}</p>
 
               <div className="mb-4">
                 <ComportamentoAlunoTag alunoId={alunoId} showMedia={true} />
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <BookOpen className="w-4 h-4" />
+              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+                <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
                 <span>{aluno.disciplinas.length} disciplinas</span>
               </div>
             </div>
           </div>
 
-          <div className="col-span-9 flex flex-col gap-6 h-full overflow-y-auto">
+          <div className="md:col-span-2 lg:col-span-3 flex flex-col gap-4 sm:gap-6">
             {/* INFORMAÇÕES PESSOAIS */}
-            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-6">
-                <GraduationCap className="w-5 h-5 text-primary" />
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-4 sm:p-6">
+              <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">
+                <GraduationCap className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
                 Informações Pessoais
               </h2>
 
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Idade</p>
-                  <p className="text-base font-semibold text-foreground">
+                  <p className="text-sm sm:text-base font-semibold text-foreground">
                     {aluno.idade ? `${aluno.idade} anos` : 'Não informada'}
                   </p>
                 </div>
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Turma</p>
-                  <p className="text-base font-semibold text-foreground">{aluno.turma}</p>
+                  <p className="text-sm sm:text-base font-semibold text-foreground">{aluno.turma}</p>
                 </div>
-
-                <div></div>
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">ID Matrícula</p>
-                  <p className="text-base font-semibold text-foreground">{aluno.idMatricula}</p>
+                  <p className="text-sm sm:text-base font-semibold text-foreground">{aluno.idMatricula}</p>
                 </div>
 
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Status</p>
-                  <span className={`inline-block text-white text-xs font-medium px-3 py-1 rounded-full ${
+                  <span className={`inline-block text-white text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap ${
                     aluno.statusMatricula?.toLowerCase() === "matriculado" 
                       ? "bg-green-500" 
                       : "bg-yellow-500"
@@ -237,35 +235,35 @@ export default function PerfilAlunoRoute() {
             </div>
 
             {/* DISCIPLINAS */}
-            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-6">
-                <BookOpen className="w-5 h-5 text-primary" />
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-4 sm:p-6">
+              <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">
+                <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
                 Disciplinas Cadastradas
               </h2>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
                 {aluno.disciplinas.map((disciplina, index) => (
                   <div
                     key={index}
-                    className="flex items-center gap-2 bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300 px-4 py-3 rounded-xl"
+                    className="flex items-center gap-2 bg-primary/10 text-primary dark:bg-primary/20 dark:text-blue-300 px-3 sm:px-4 py-2 sm:py-3 rounded-xl text-xs sm:text-sm"
                   >
-                    <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-4 h-4 text-white" />
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+                      <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                     </div>
-                    <span className="text-sm font-medium">{disciplina}</span>
+                    <span className="font-medium truncate">{disciplina}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* HISTÓRICO DE COMPORTAMENTO */}
-            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-6">
-              <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground mb-6">
-                <TrendingUp className="w-5 h-5 text-primary" />
+            <div className="bg-card dark:bg-gray-800 rounded-2xl shadow-sm border border-border p-4 sm:p-6">
+              <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground mb-4 sm:mb-6">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary shrink-0" />
                 Histórico de Comportamento
               </h2>
 
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {aluno.comportamentoHistorico.map((item, index) => {
                   const mediaData = getMediaComportamentoBimestre(item.bimestre);
                   const temNota = mediaData !== null;
@@ -275,15 +273,15 @@ export default function PerfilAlunoRoute() {
                   return (
                     <div
                       key={index}
-                      className="flex items-center justify-between bg-primary/10 text-gray-50 dark:bg-primary/20 px-6 py-4 rounded-xl"
+                      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 bg-primary/10 text-gray-50 dark:bg-primary/20 px-4 sm:px-6 py-3 sm:py-4 rounded-xl"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-foreground">{item.bimestre}</p>
+                        <p className="text-xs sm:text-sm font-semibold text-foreground">{item.bimestre}</p>
                         <p className="text-xs text-muted-foreground">{item.meses}</p>
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                         {temNota && mediaData && (
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1 sm:gap-2">
                             <ComportamentoTag tipo={mediaData.tipo} />
                             <span className="text-xs text-muted-foreground font-medium">
                               ({mediaData.media.toFixed(1)})
@@ -294,10 +292,10 @@ export default function PerfilAlunoRoute() {
                           variant="outline"
                           size="sm"
                           onClick={() => handleAbrirModalAvaliacao(item.bimestre)}
-                          className="flex items-center gap-2 rounded-md bg-primary hoover:bg-accent dark:bg-primary/30 dark:hover:bg-primary/40"
+                          className="flex items-center gap-1 sm:gap-2 rounded-md bg-primary hover:bg-accent dark:bg-primary/30 dark:hover:bg-primary/40 text-xs sm:text-sm px-2 sm:px-3"
                           title={tituloAbas}
                         >
-                          <Pencil className="w-4 h-4" />
+                          <Pencil className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
                           {labelBotao}
                         </Button>
                       </div>

@@ -110,27 +110,27 @@ export default function AlunoDashboard() {
           <Navbar />
 
           {/* CONTEÚDO */}
-          <div className="px-10 py-10 animate-fadeIn">
+          <div className="px-4 sm:px-6 md:px-10 py-6 sm:py-8 md:py-10 animate-fadeIn">
 
-            <h1 className="text-3xl font-bold animate-fadeIn">
+            <h1 className="text-2xl sm:text-3xl font-bold animate-fadeIn">
               Bem-vindo, {student.nome.split(" ")[0]}!
             </h1>
 
-            <p className="text-gray-600 dark:text-gray-300 mt-1 animate-fadeIn">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mt-1 animate-fadeIn">
               Aqui você pode visualizar suas informações e notas de comportamento
             </p>
 
             {/* GRID */}
-            <div className="grid grid-cols-4 gap-10 mt-10 items-start">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 md:gap-10 mt-8 sm:mt-10 items-start">
 
               {/* COLUNA ESQUERDA */}
-              <div className="col-span-1 animate-fadeIn">
+              <div className="col-span-1 md:col-span-1 animate-fadeIn">
                 <div
                   className="
                     bg-card border border-border
                     shadow-sm
-                    rounded-xl p-6 text-center
-                    h-full w-full min-h-[980px]
+                    rounded-xl p-4 sm:p-6 text-center
+                    h-full w-full min-h-fit md:min-h-[980px]
                     flex flex-col items-center justify-start
                     pop card-anim glow tilt
                   "
@@ -138,20 +138,20 @@ export default function AlunoDashboard() {
                   <img
                     src={perfilService.getFotoUrl(student.foto, 'aluno')}
                     alt={student.nome}
-                    className="w-28 h-28 rounded-full mx-auto border-4 border-primary shadow-lg animate-fadeIn"
+                    className="w-20 sm:w-24 md:w-28 h-20 sm:h-24 md:h-28 rounded-full mx-auto border-4 border-primary shadow-lg animate-fadeIn"
                   />
 
-                  <h2 className="text-xl font-semibold mt-4 animate-fadeIn">
+                  <h2 className="text-lg sm:text-xl font-semibold mt-3 sm:mt-4 animate-fadeIn">
                     {student.nome}
                   </h2>
 
-                  <p className="text-sm text-gray-500 dark:text-gray-300 animate-fadeIn">
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 animate-fadeIn">
                     {student.turma}
                   </p>
 
                   <div
                     className={`
-                      mt-3 text-white rounded-full px-4 py-1 text-sm font-medium pulse animate-fadeIn
+                      mt-3 text-white rounded-full px-3 sm:px-4 py-1 text-xs sm:text-sm font-medium pulse animate-fadeIn
                       ${comportamentoColor[student.statusComportamento.toLowerCase()]}
                     `}
                   >
@@ -159,51 +159,51 @@ export default function AlunoDashboard() {
                       student.statusComportamento.slice(1)}
                   </div>
 
-                  <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-600 dark:text-gray-300 animate-fadeIn">
-                    <BookOpen className="w-4 h-4" />
+                  <div className="flex items-center justify-center gap-2 mt-3 sm:mt-4 text-xs sm:text-sm text-gray-600 dark:text-gray-300 animate-fadeIn">
+                    <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
                     {student.disciplinas.length} disciplinas
                   </div>
                 </div>
               </div>
 
               {/* COLUNA DIREITA */}
-              <div className="col-span-3 flex flex-col gap-10 animate-fadeIn">
+              <div className="col-span-1 md:col-span-3 flex flex-col gap-6 sm:gap-8 md:gap-10 animate-fadeIn">
 
                 {/* INFORMAÇÕES PESSOAIS */}
                 <div
                   className="
                     bg-card border border-border
                     shadow-sm
-                    rounded-xl p-6 min-h-[300px]
+                    rounded-xl p-4 sm:p-6 min-h-fit
                     pop glow tilt card-anim
                   "
                 >
-                  <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground animate-fadeIn">
-                    <Info className="w-5 h-5 text-primary" />
+                  <h2 className="flex items-center gap-2 text-base sm:text-lg font-semibold text-foreground animate-fadeIn">
+                    <Info className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     Informações pessoais
                   </h2>
 
-                  <div className="grid grid-cols-3 gap-4 mt-4 animate-fadeIn">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4 animate-fadeIn">
 
                     <div>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">Idade</p>
-                      <p className="font-semibold">{student.idade} anos</p>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">Idade</p>
+                      <p className="font-semibold text-sm sm:text-base">{student.idade} anos</p>
 
-                      <p className="text-gray-500 dark:text-gray-300 text-sm mt-4">
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 mt-4">
                         ID do aluno
                       </p>
-                      <p className="font-semibold text-foreground">{student.idMatricula}</p>
+                      <p className="font-semibold text-sm sm:text-base text-foreground">{student.idMatricula}</p>
                     </div>
 
                     <div>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">Turma</p>
-                      <p className="font-semibold">{student.turma}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">Turma</p>
+                      <p className="font-semibold text-sm sm:text-base">{student.turma}</p>
 
-                      <p className="text-gray-500 dark:text-gray-300 text-sm mt-4">Status</p>
+                      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 mt-4">Status</p>
 
                       <span
                         className={`
-                          px-3 py-1 rounded-full text-sm font-medium
+                          px-3 py-1 rounded-full text-xs sm:text-sm font-medium inline-block
                           ${
                             student.statusMatricula.toLowerCase() === "matriculado"
                               ? "bg-accent text-accent-foreground"
@@ -223,34 +223,34 @@ export default function AlunoDashboard() {
                   className="
                     bg-card border border-border
                     shadow-sm
-                    rounded-xl p-6 min-h-[300px]
+                    rounded-xl p-4 sm:p-6 min-h-fit
                     pop glow tilt card-anim
                   "
                 >
-                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2 animate-fadeIn">
-                    <User className="w-5 h-5 text-primary" />
+                  <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4 flex items-center gap-2 animate-fadeIn">
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     Minhas disciplinas
                   </h2>
 
-                  <div className="grid grid-cols-3 gap-3 animate-fadeIn">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 sm:gap-3 animate-fadeIn">
                     {student?.disciplinas && student.disciplinas.length > 0 ? (
                       student.disciplinas.map((disciplina, index) => (
                         <div
                           key={index}
                           className="
-                            px-4 py-2 rounded-lg
+                            px-3 sm:px-4 py-2 rounded-lg
                             bg-muted
                             flex items-center gap-2
-                            text-foreground text-sm
+                            text-foreground text-xs sm:text-sm
                             pop glow transition
                           "
                         >
-                          <BookOpen className="w-4 h-4 text-primary" />
-                          {disciplina}
+                          <BookOpen className="w-3 h-3 sm:w-4 sm:h-4 text-primary shrink-0" />
+                          <span className="truncate">{disciplina}</span>
                         </div>
                       ))
                     ) : (
-                      <p className="col-span-3 text-muted-foreground text-sm">
+                      <p className="col-span-full text-muted-foreground text-xs sm:text-sm">
                         Nenhuma disciplina cadastrada
                       </p>
                     )}
@@ -262,36 +262,36 @@ export default function AlunoDashboard() {
                   className="
                     bg-card border border-border
                     shadow-sm
-                    rounded-xl p-6 min-h-[300px]
+                    rounded-xl p-4 sm:p-6 min-h-fit
                     pop glow tilt card-anim
                   "
                 >
-                  <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2 animate-fadeIn">
-                    <Info className="w-5 h-5 text-primary" />
+                  <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4 flex items-center gap-2 animate-fadeIn">
+                    <Info className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                     Histórico de comportamento
                   </h2>
 
-                  <div className="flex flex-col gap-4 animate-fadeIn">
+                  <div className="flex flex-col gap-3 sm:gap-4 animate-fadeIn">
                     {student.comportamentoHistorico.map((item, index) => (
                       <div
                         key={index}
                         className="
-                          flex items-center justify-between
-                          px-4 py-3 rounded-lg
+                          flex flex-col sm:flex-row sm:items-center sm:justify-between
+                          px-3 sm:px-4 py-3 rounded-lg
                           bg-gray-100 dark:bg-gray-700
-                          pop glow transition
+                          pop glow transition gap-2
                         "
                         >
                           <div>
-                            <p className="font-semibold">{item.bimestre}</p>
-                            <p className="text-sm text-gray-500 dark:text-gray-300">
+                            <p className="font-semibold text-sm sm:text-base">{item.bimestre}</p>
+                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300">
                               {item.meses}
                             </p>
                           </div>
   
                           <span
                             className={`
-                              px-3 py-1 text-white rounded-full text-sm font-medium
+                              px-3 py-1 text-white rounded-full text-xs sm:text-sm font-medium inline-block
                               ${comportamentoColor[item.status.toLowerCase()]}
                             `}
                           >

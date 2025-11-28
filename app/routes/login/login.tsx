@@ -41,9 +41,9 @@ type LoginValues = z.infer<typeof LoginSchema>;
 
 function Welcome() {
   return (
-    <section className="flex flex-col items-center justify-center gap-6">
-      <div className="flex flex-col items-center">
-        <h1 className="font-display text-3xl font-bold leading-tight md:text-4xl text-center">
+    <section className="flex flex-col items-center justify-center gap-4 sm:gap-6">
+      <div className="flex flex-col items-center px-4 sm:px-0">
+        <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold leading-tight text-center">
           <span className="bg-linear-to-r from-foreground to-primary bg-clip-text text-transparent">
             Seja Bem-vindo ao Portal
             <br />
@@ -55,7 +55,7 @@ function Welcome() {
       <img
         src="/viriato_correa.svg"
         alt="Viriato Correia"
-        className="h-auto w-64 md:w-80"
+        className="h-auto w-48 sm:w-56 md:w-64 lg:w-80"
       />
     </section>
   );
@@ -92,7 +92,7 @@ function LoginForm({
     <Button
       type="button"
       variant="outline"
-      className={`group w-40 h-16 flex flex-col items-center justify-center gap-2 border-primary border-2 transition-all duration-300 ${
+      className={`group flex-1 sm:flex-none sm:w-40 h-14 sm:h-16 flex flex-col items-center justify-center gap-1 sm:gap-2 border-primary border-2 transition-all duration-300 text-xs sm:text-sm ${
         isActive
           ? "bg-primary text-white hover:bg-primary hover:text-white"
           : "bg-white text-primary hover:bg-primary/10"
@@ -100,44 +100,44 @@ function LoginForm({
       onClick={() => onChange(profile.value)}
     >
       {React.cloneElement(profile.icon, {
-        className: `size-6 ${isActive ? "text-white" : "text-primary"}`,
+        className: `size-5 sm:size-6 ${isActive ? "text-white" : "text-primary"}`,
       })}
       {profile.label}
     </Button>
   );
 
   return (
-    <section className="flex w-full items-center justify-center">
+    <section className="flex w-full items-center justify-center px-4 sm:px-0">
       <Card className="w-full max-w-xl border-primary">
         <CardHeader>
           <div className="flex items-center justify-center">
-            <GraduationCap className="size-16 bg-primary text-white rounded-full p-2" />
+            <GraduationCap className="size-12 sm:size-16 bg-primary text-white rounded-full p-2" />
           </div>
-          <CardTitle className="text-center font-bold text-2xl">
+          <CardTitle className="text-center font-bold text-xl sm:text-2xl">
             Área de login
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="text-center text-sm sm:text-base">
             Faça login para acessar o sistema
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-950 dark:border-red-800">
-              <p className="text-red-700 dark:text-red-400 text-sm">{error}</p>
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg dark:bg-red-950 dark:border-red-800 text-xs sm:text-sm">
+              <p className="text-red-700 dark:text-red-400">{error}</p>
             </div>
           )}
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="profile"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Entrar como:</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Entrar como:</FormLabel>
                     <FormControl>
-                      <div className="flex items-center justify-between w-full">
+                      <div className="flex flex-wrap sm:flex-nowrap items-center justify-center sm:justify-between w-full gap-2 sm:gap-0">
                         {profiles.map((profile) => (
                           <ProfileSelect
                             key={profile.value}
@@ -157,7 +157,7 @@ function LoginForm({
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Email</FormLabel>
                     <FormControl>
                       <Input 
                         placeholder="seu@email.com" 
@@ -176,7 +176,7 @@ function LoginForm({
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Senha</FormLabel>
+                    <FormLabel className="text-sm sm:text-base">Senha</FormLabel>
                     <FormControl>
                       <PasswordInput 
                         placeholder="••••••••" 
@@ -189,7 +189,7 @@ function LoginForm({
                 )}
               />
 
-              <Button type="submit" className="w-full" disabled={isDisabled}>
+              <Button type="submit" className="w-full text-sm sm:text-base" disabled={isDisabled}>
                 Entrar
               </Button>
 
@@ -197,7 +197,7 @@ function LoginForm({
                   <button
                     type="button"
                     onClick={onForgotPassword}
-                    className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+                    className="text-xs sm:text-sm text-muted-foreground underline-offset-4 hover:underline"
                   >
                     Esqueci a senha
                   </button>
@@ -268,7 +268,7 @@ export default function Login() {
 
   return (
     <main className="min-h-screen w-full bg-linear-to-br from-[#C0D5F9] to-[#D0F9DF]">
-      <div className="container mx-auto grid min-h-screen w-full grid-cols-1 items-center gap-8 px-4 py-10 md:grid-cols-2">
+      <div className="container mx-auto grid min-h-screen w-full grid-cols-1 items-center gap-6 sm:gap-8 px-4 sm:px-6 py-6 sm:py-10 sm:grid-cols-2">
         <Welcome />
 
         <LoginForm

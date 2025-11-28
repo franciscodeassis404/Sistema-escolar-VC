@@ -29,16 +29,16 @@ export default function ThemeToggle() {
       className="flex items-center gap-2 cursor-pointer"
       aria-label="Alternar tema"
     >
-      <div className="relative w-12 h-6 rounded-full p-0.5 border border-border flex items-center">
+      <div className="relative w-10 h-5 sm:w-12 sm:h-6 rounded-full p-0.5 border border-border flex items-center">
         <div
           className={`absolute inset-0 rounded-full transition-colors ${isDark ? "bg-gray-700" : "bg-gray-200"}`}
         />
         <div
-          className={`relative z-10 flex items-center justify-center w-5 h-5 rounded-full bg-white shadow transform transition-transform ${
-            isDark ? "translate-x-6" : "translate-x-0"
+          className={`relative z-10 flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white shadow transform transition-transform ${
+            isDark ? "translate-x-5 sm:translate-x-6" : "translate-x-0"
           }`}
         >
-          {isDark ? <Moon className="w-3 h-3 text-gray-700" /> : <Sun className="w-3 h-3 text-yellow-500" />}
+          {isDark ? <Moon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-gray-700" /> : <Sun className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-yellow-500" />}
         </div>
       </div>
     </div>

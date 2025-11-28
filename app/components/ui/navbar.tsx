@@ -32,21 +32,21 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
 
   return (
     <>
-      <header className="w-full border-b bg-white dark:bg-[#161B22] dark:border-gray-700 h-20 flex items-center justify-between px-10 shadow-sm">
-        <div className="flex items-center gap-3">
+      <header className="w-full border-b bg-white dark:bg-[#161B22] dark:border-gray-700 h-16 sm:h-20 flex items-center justify-between px-3 sm:px-6 md:px-10 shadow-sm">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <img
             src={logo}
-            className="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-gray-300 dark:border-gray-600 shrink-0"
           />
-          <div>
-            <p className="text-sm text-secondary font-bold dark:text-gray-400">
+          <div className="min-w-0">
+            <p className="text-xs sm:text-sm text-secondary font-bold dark:text-gray-400 truncate">
               Portal Viriato Corrêia
             </p>
-            <p className="font-medium text-sm">Gestão de Alunos</p>
+            <p className="font-medium text-xs sm:text-sm truncate">Gestão de Alunos</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 shrink-0">
           <ThemeToggle />
           <TagPerfil tipo={tipoPerfil} />
 
@@ -54,10 +54,11 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
             variant="outline"
             size="sm"
             onClick={() => setShowLogout(true)}   
-            className="flex items-center gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-700"
+            className="flex items-center gap-1 sm:gap-2 hover:bg-red-50 hover:text-red-600 hover:border-red-300 dark:hover:bg-red-950 dark:hover:text-red-400 dark:hover:border-red-700 text-xs sm:text-sm px-2 sm:px-3"
           >
-            <LogOut className="w-4 h-4" />
-            Sair
+            <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Sair</span>
+            <span className="sm:hidden">Sair</span>
           </Button>
         </div>
       </header>

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import { KeyRound, Loader2 } from "lucide-react";
+import { KeyRound, Loader2, ArrowLeft } from "lucide-react";
 import { motion } from "framer-motion";
 import { BrowserRouter } from "react-router-dom";
 
@@ -102,6 +102,17 @@ export default function ResetPassword() {
           <Card className="w-[420px] max-w-full rounded-2xl shadow-lg bg-white">
             
             <CardHeader>
+              <div className="flex items-center justify-between mb-4">
+                <button
+                  onClick={() => navigate("/")}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                  title="Voltar para login"
+                >
+                  <ArrowLeft className="w-5 h-5 text-gray-600" />
+                </button>
+                <div className="flex-1" />
+              </div>
+
               <motion.div
                 initial={{ rotate: -10 }}
                 animate={{ rotate: 0 }}
