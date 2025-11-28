@@ -3,7 +3,9 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router";
-import { KeyRound } from "lucide-react";
+import { KeyRound, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { BrowserRouter } from "react-router-dom";
 
 import {
   Card,
@@ -24,10 +26,18 @@ import {
 } from "~/components/ui/form";
 
 // ------------------------------------
+// FAKE TOKEN (troque depois)
+// ------------------------------------
+const emailFromToken: string | null = null;
+// coloque para testar ↓
+// const emailFromToken = "usuarioteste@gmail.com";
+
+// ------------------------------------
 // VALIDAÇÃO
 // ------------------------------------
 const ResetSchema = z
   .object({
+    email: z.string().email("Digite um e-mail válido"),
     password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
     confirmPassword: z.string().min(6, "Confirme a senha"),
   })
@@ -44,89 +54,160 @@ type ResetValues = z.infer<typeof ResetSchema>;
 export default function ResetPassword() {
   const navigate = useNavigate();
   const [success, setSuccess] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const form = useForm<ResetValues>({
     resolver: zodResolver(ResetSchema),
-    defaultValues: { password: "", confirmPassword: "" },
+    defaultValues: {
+      email: emailFromToken ?? "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   async function onSubmit(values: ResetValues) {
-    console.log("Dados enviados (front-only):", values);
+    setLoading(true);
 
-    // Apenas visual — sem backend
-    setSuccess(true);
+    // apenas visual
+    setTimeout(() => {
+      console.log("Enviado:", values);
+      setSuccess(true);
+      setLoading(false);
 
-    // Após 2s, volta para o login
-    setTimeout(() => navigate("/"), 1800);
+      setTimeout(() => navigate("/"), 2000);
+    }, 1500);
   }
+
+  // AUTOCOMPLETE DO EMAIL
+  const emailDomains = ["gmail.com", "outlook.com", "hotmail.com", "yahoo.com"];
+
+  const handleEmailSuggest = (value: string) => {
+    if (!value.includes("@")) return value;
+
+    const [user, domain] = value.split("@");
+
+    const suggestion = emailDomains.find((d) => d.startsWith(domain));
+    return user + "@" + (suggestion ?? domain);
+  };
 
   return (
     <main className="min-h-screen w-full bg-linear-to-br from-[#C0D5F9] to-[#D0F9DF]">
       <div className="container mx-auto flex min-h-screen items-center justify-center px-4">
-        
-        <Card className="w-full max-w-md border-primary">
-          <CardHeader>
-            <div className="flex items-center justify-center">
-              <KeyRound className="size-16 bg-primary text-white rounded-full p-2" />
-            </div>
 
-            <CardTitle className="text-center font-bold text-2xl">
-              Redefinir Senha
-            </CardTitle>
+        <motion.div
+          initial={{ opacity: 0, y: 40, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+        >
+          <Card className="w-[420px] max-w-full rounded-2xl shadow-lg bg-white">
+            
+            <CardHeader>
+              <motion.div
+                initial={{ rotate: -10 }}
+                animate={{ rotate: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center justify-center"
+              >
+                <KeyRound className="size-16 bg-primary text-white rounded-full p-2 shadow-lg" />
+              </motion.div>
 
-            <CardDescription className="text-center">
-              Crie uma nova senha para acessar o portal
-            </CardDescription>
-          </CardHeader>
+              <CardTitle className="text-center font-bold text-2xl">
+                Redefinir Senha
+              </CardTitle>
 
-          <CardContent>
-            {success && (
-              <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                <p className="text-green-700 text-sm">
-                  Senha redefinida com sucesso! Redirecionando...
-                </p>
-              </div>
-            )}
+              <CardDescription className="text-center">
+                Digite seu e-mail e crie uma nova senha
+              </CardDescription>
+            </CardHeader>
 
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <CardContent>
+              {success && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg"
+                >
+                  <p className="text-green-700 text-sm">
+                    Senha redefinida com sucesso! Redirecionando...
+                  </p>
+                </motion.div>
+              )}
 
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nova senha</FormLabel>
-                      <FormControl>
-                        <PasswordInput placeholder="••••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
 
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirmar nova senha</FormLabel>
-                      <FormControl>
-                        <PasswordInput placeholder="••••••••" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                  {/* EMAIL */}
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>E-mail</FormLabel>
+                        <FormControl>
+                          <input
+                            type="email"
+                            disabled={!!emailFromToken}
+                            className="w-full rounded-md border px-3 py-2 disabled:bg-gray-100 disabled:text-gray-500"
+                            placeholder="seuemail@email.com"
+                            onChange={(e) => {
+                              const value = handleEmailSuggest(e.target.value);
+                              field.onChange(value);
+                            }}
+                            value={field.value}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <Button type="submit" className="w-full">
-                  Redefinir senha
-                </Button>
+                  {/* NOVA SENHA */}
+                  <FormField
+                    control={form.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nova senha</FormLabel>
+                        <FormControl>
+                          <PasswordInput placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+                  {/* CONFIRMAR SENHA */}
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirmar senha</FormLabel>
+                        <FormControl>
+                          <PasswordInput placeholder="••••••••" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2"
+                  >
+                    {loading && <Loader2 className="size-5 animate-spin" />}
+                    {loading ? "Redefinindo..." : "Redefinir senha"}
+                  </Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
+        </motion.div>
+
       </div>
     </main>
   );
