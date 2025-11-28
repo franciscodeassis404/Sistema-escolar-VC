@@ -6,6 +6,7 @@ import { Input } from "~/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
+import { ComportamentoAlunoTag } from "~/components/ui/ComportamentoAlunoTag";
 import { Grid3x3, Search, List, User, Building2, Plus, BookOpen, Loader2 } from "lucide-react";
 
 import { adminService, type UsuarioCard, type PageResponse } from "~/services/admin.service";
@@ -319,11 +320,7 @@ export default function AdminRoute() {
                               </CardDescription>
                             </div>
                             <div className="flex justify-center mt-2">
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                usuario.status?.toLowerCase() === "matriculado" ? "bg-green-500/15 text-green-600" : "bg-yellow-500/15 text-yellow-600"
-                              }`}>
-                                {usuario.status || 'Matriculado'}
-                              </span>
+                              <ComportamentoAlunoTag alunoId={usuario.id} showMedia={false} />
                             </div>
                           </CardContent>
                         </Card>
@@ -353,6 +350,7 @@ export default function AdminRoute() {
                             </div>
                           </div>
                           <div className="flex items-center gap-3">
+                            <ComportamentoAlunoTag alunoId={usuario.id} showMedia={false} />
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                               usuario.status?.toLowerCase() === "matriculado" ? "bg-green-500/15 text-green-600" : "bg-yellow-500/15 text-yellow-600"
                             }`}>

@@ -2,9 +2,11 @@ import * as React from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { BookOpen, TrendingUp, GraduationCap, ArrowLeft, Pencil, Loader2, AlertCircle } from "lucide-react";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
+import { ComportamentoAlunoTag } from "~/components/ui/ComportamentoAlunoTag";
 import { Button } from "~/components/ui/button";
 import { ComportamentoModal, type AvaliacaoData } from "~/components/ui/comportamentoModal";
 import { perfilService, type AlunoDetalhes } from "~/services/perfilService";
+import { useAvaliacoes } from "~/hooks/useAvaliacoes";
 
 export default function PerfilAlunoRoute() {
   const [searchParams] = useSearchParams();
@@ -17,7 +19,8 @@ export default function PerfilAlunoRoute() {
   const [error, setError] = React.useState<string | null>(null);
   const [modalAberto, setModalAberto] = React.useState(false);
   const [bimestreAtual, setBimestreAtual] = React.useState<string>('');
-  const [salvarAvaliacao, setSalvarAvaliacao] = React.useState(false);
+
+  const { avaliacoes, getMediaComportamentoBimestre, getMediaComportamentoGeral, adicionarAvaliacao } = useAvaliacoes(alunoId);;
 
   React.useEffect(() => {
     if (alunoId) {
@@ -68,33 +71,17 @@ export default function PerfilAlunoRoute() {
     setModalAberto(true);
   };
 
-  const handleSalvarAvaliacao = async (avaliacoes: AvaliacaoData) => {
-    if (!alunoId) {
-      console.error('ID do aluno não encontrado');
-      return;
-    }
+  const handleSalvarAvaliacao = async (avaliacaoData: AvaliacaoData) => {
+    // Salvar avaliação localmente
+    adicionarAvaliacao(bimestreAtual, avaliacaoData);
 
-    setSalvarAvaliacao(true);
-    try {
-      console.log('Salvando avaliação:', {
-        alunoId: Number(alunoId),
-        bimestre: bimestreAtual,
-        avaliacoes,
-      });
-      
-      // Chamar o serviço para salvar a avaliação
-      await perfilService.salvarAvaliacaoComportamento(Number(alunoId), bimestreAtual, avaliacoes);
-      
-      console.log('✅ Avaliação salva com sucesso');
-      
-      // Recarregar o perfil
-      await carregarPerfil();
-    } catch (err: any) {
-      console.error('Erro ao salvar avaliação:', err);
-      alert('Erro ao salvar avaliação. Tente novamente.');
-    } finally {
-      setSalvarAvaliacao(false);
-    }
+    console.log('Avaliação salva localmente:', {
+      alunoId,
+      bimestre: bimestreAtual,
+      avaliacaoData,
+    });
+    
+    setModalAberto(false);
   };
 
   if (loading) {
@@ -193,7 +180,7 @@ export default function PerfilAlunoRoute() {
               <p className="text-sm text-muted-foreground mb-3">{aluno.turma}</p>
 
               <div className="mb-4">
-                <ComportamentoTag tipo={mapComportamento(aluno.statusComportamento)} />
+                <ComportamentoAlunoTag alunoId={alunoId} showMedia={true} />
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -275,7 +262,8 @@ export default function PerfilAlunoRoute() {
 
               <div className="space-y-3">
                 {aluno.comportamentoHistorico.map((item, index) => {
-                  const temNota = item.status && item.status.trim() !== '';
+                  const mediaData = getMediaComportamentoBimestre(item.bimestre);
+                  const temNota = mediaData !== null;
                   const labelBotao = temNota ? 'Editar Comportamento' : 'Avaliar Comportamento';
                   const tituloAbas = temNota ? `Editar comportamento do ${item.bimestre}` : `Avaliar comportamento do ${item.bimestre}`;
 
@@ -289,7 +277,14 @@ export default function PerfilAlunoRoute() {
                         <p className="text-xs text-muted-foreground">{item.meses}</p>
                       </div>
                       <div className="flex items-center gap-4">
-                        {temNota && <ComportamentoTag tipo={mapComportamento(item.status)} />}
+                        {temNota && mediaData && (
+                          <div className="flex items-center gap-2">
+                            <ComportamentoTag tipo={mediaData.tipo} />
+                            <span className="text-xs text-muted-foreground font-medium">
+                              ({mediaData.media.toFixed(1)})
+                            </span>
+                          </div>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"
@@ -316,7 +311,7 @@ export default function PerfilAlunoRoute() {
         bimestre={bimestreAtual}
         alunoId={Number(alunoId) || 0}
         onSubmit={handleSalvarAvaliacao}
-        isLoading={salvarAvaliacao}
+        isLoading={false}
       />
     </div>
   );

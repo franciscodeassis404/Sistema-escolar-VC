@@ -6,6 +6,7 @@ import { Input } from "~/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "~/components/ui/avatar";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
+import { ComportamentoAlunoTag } from "~/components/ui/ComportamentoAlunoTag";
 import { Grid3x3, Search, BookOpen, List, User, Loader2 } from "lucide-react";
 
 import { alunoService, type AlunoCard, type PageResponse } from "~/services/alunoService";
@@ -217,7 +218,7 @@ export default function ProfessorRoute() {
                             {aluno.totalDisciplinas} Disciplinas
                           </CardDescription>
                           <div className="flex justify-center mt-2">
-                            <ComportamentoTag tipo={mapComportamento(aluno.statusComportamento)} />
+                            <ComportamentoAlunoTag alunoId={aluno.id} showMedia={false} />
                           </div>
                         </div>
                       </CardContent>
@@ -278,7 +279,7 @@ export default function ProfessorRoute() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <ComportamentoTag tipo={mapComportamento(aluno.statusComportamento)} />
+                        <ComportamentoAlunoTag alunoId={aluno.id} showMedia={false} />
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <BookOpen className="h-4 w-4" />
                           {aluno.totalDisciplinas}
