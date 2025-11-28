@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router";
 import { BookOpen, TrendingUp, GraduationCap, ArrowLeft, Pencil, Loader2, AlertCircle } from "lucide-react";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
 import { Button } from "~/components/ui/button";
+import { ComportamentoModal, type AvaliacaoData } from "~/components/ui/comportamentoModal";
 import { perfilService, type AlunoDetalhes } from "~/services/perfilService";
 
 export default function PerfilAlunoRoute() {
@@ -14,6 +15,9 @@ export default function PerfilAlunoRoute() {
   const [aluno, setAluno] = React.useState<AlunoDetalhes | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
+  const [modalAberto, setModalAberto] = React.useState(false);
+  const [bimestreAtual, setBimestreAtual] = React.useState<string>('');
+  const [salvarAvaliacao, setSalvarAvaliacao] = React.useState(false);
 
   React.useEffect(() => {
     if (alunoId) {
@@ -56,6 +60,40 @@ export default function PerfilAlunoRoute() {
       case 'bom': return 'bom';
       case 'em risco': return 'ruim';
       default: return 'bom';
+    }
+  };
+
+  const handleAbrirModalAvaliacao = (bimestre: string) => {
+    setBimestreAtual(bimestre);
+    setModalAberto(true);
+  };
+
+  const handleSalvarAvaliacao = async (avaliacoes: AvaliacaoData) => {
+    if (!alunoId) {
+      console.error('ID do aluno não encontrado');
+      return;
+    }
+
+    setSalvarAvaliacao(true);
+    try {
+      console.log('Salvando avaliação:', {
+        alunoId: Number(alunoId),
+        bimestre: bimestreAtual,
+        avaliacoes,
+      });
+      
+      // Chamar o serviço para salvar a avaliação
+      await perfilService.salvarAvaliacaoComportamento(Number(alunoId), bimestreAtual, avaliacoes);
+      
+      console.log('✅ Avaliação salva com sucesso');
+      
+      // Recarregar o perfil
+      await carregarPerfil();
+    } catch (err: any) {
+      console.error('Erro ao salvar avaliação:', err);
+      alert('Erro ao salvar avaliação. Tente novamente.');
+    } finally {
+      setSalvarAvaliacao(false);
     }
   };
 
@@ -255,7 +293,7 @@ export default function PerfilAlunoRoute() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => console.log(tituloAbas)}
+                          onClick={() => handleAbrirModalAvaliacao(item.bimestre)}
                           className="flex items-center gap-2 rounded-md bg-primary hoover:bg-accent dark:bg-primary/30 dark:hover:bg-primary/40"
                           title={tituloAbas}
                         >
@@ -271,6 +309,15 @@ export default function PerfilAlunoRoute() {
           </div>
         </div>
       </div>
+
+      <ComportamentoModal
+        isOpen={modalAberto}
+        onClose={() => setModalAberto(false)}
+        bimestre={bimestreAtual}
+        alunoId={Number(alunoId) || 0}
+        onSubmit={handleSalvarAvaliacao}
+        isLoading={salvarAvaliacao}
+      />
     </div>
   );
 }
