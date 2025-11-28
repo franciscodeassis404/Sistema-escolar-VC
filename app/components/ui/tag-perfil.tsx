@@ -4,76 +4,45 @@ import { authService } from "~/services/auth.service";
 
 type TagPerfilProps = {
     tipo?: "aluno" | "professor" | "admin";
-    nomeUsuario?: string;
     className?: string;
 } & React.ComponentProps<"div">;
 
-const TagPerfil = ({ tipo = "professor", nomeUsuario, className, ...props }: TagPerfilProps) => {
-    // Obter usuário logado se não tiver nomeUsuario
-    const usuarioLogado = React.useMemo(() => {
-        if (nomeUsuario) return nomeUsuario;
-        return authService.getUser()?.nome || "";
-    }, [nomeUsuario]);
+const TagPerfil = ({ tipo = "professor", className, ...props }: TagPerfilProps) => {
+    // Obter usuário logado
+    const usuario = React.useMemo(() => {
+        return authService.getUser();
+    }, []);
 
-    const detectarGenero = (nome: string): "masculino" | "feminino" => {
-        if (!nome) return "masculino";
-        
-        const ultimaPalavra = nome.trim().split(" ").pop()?.toLowerCase() || "";
-        
-        if (ultimaPalavra.endsWith("a")) {
-            return "feminino";
-        }
-        
-        return "masculino";
-    };
-
-    const formatarNome = (nome: string | undefined, tipoUsuario: string) => {
-        if (!nome) {
-            switch (tipoUsuario) {
-                case "admin":
-                    return "Admin";
-                case "professor":
-                    return "Professor";
-                case "aluno":
-                    return "Aluno";
-                default:
-                    return "Usuário";
-            }
+    const obterLabel = () => {
+        if (!usuario?.nome) {
+            return tipo === "admin" ? "Admin" : "Usuário";
         }
 
-        // Remove "Prof.", "Profa.", "Professor", "Professora" se já vier no nome
-        const nomeLimpo = nome.replace(/^(Prof\.|Profa\.|Professor|Professora)\s*/i, "").trim();
-        const primeiroNome = nomeLimpo.split(" ")[0];
+        const primeiroNome = usuario.nome.split(" ")[0];
 
-        if (tipoUsuario === "professor") {
-            const genero = detectarGenero(primeiroNome);
-            const prefixo = genero === "feminino" ? "Profa." : "Prof.";
-            return `${prefixo} ${primeiroNome}`;
+        // Admin: apenas "Admin"
+        if (tipo === "admin") {
+            return "Admin";
         }
 
-        if (tipoUsuario === "admin") {
-            return `Admin - ${primeiroNome}`;
-        }
-
+        // Aluno e Professor: apenas o primeiro nome da pessoa logada
         return primeiroNome;
     };
 
     const config = {
         aluno: {
             icon: Users,
-            label: formatarNome(usuarioLogado, "aluno"),
         },
         professor: {
             icon: GraduationCap,
-            label: formatarNome(usuarioLogado, "professor"),
         },
         admin: {
             icon: Shield,
-            label: formatarNome(usuarioLogado, "admin"),
         },
     };
 
-    const { icon: Icon, label } = config[tipo];
+    const { icon: Icon } = config[tipo];
+    const label = obterLabel();
 
     return (
         <div

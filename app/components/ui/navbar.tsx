@@ -48,7 +48,7 @@ const Navbar = ({ tipoPerfil = "professor", className, ...props }: NavbarProps) 
 
         <div className="flex items-center gap-4">
           <ThemeToggle />
-          <TagPerfil tipo={tipoPerfil} nomeUsuario={user?.nome} />
+          <TagPerfil tipo={tipoPerfil} />
 
           <Button
             variant="outline"
