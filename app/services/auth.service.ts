@@ -1,9 +1,5 @@
 import axios from 'axios';
 
-// ANTES:
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
-// DEPOIS (para Vite/React Router):
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface LoginRequest {
@@ -24,7 +20,7 @@ export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     try {
       console.log('Fazendo login com:', credentials.email);
-      console.log('API URL:', API_BASE_URL); // Para debug
+      console.log('API URL:', API_BASE_URL);
 
       const response = await axios.post<LoginResponse>(
         `${API_BASE_URL}/auth/login`,
@@ -32,7 +28,7 @@ export const authService = {
         {
           headers: {
             'Content-Type': 'application/json',
-            'ngrok-skip-browser-warning': 'true', 
+            'ngrok-skip-browser-warning': 'true',
           },
           timeout: 10000,
         }
@@ -75,16 +71,24 @@ export const authService = {
     localStorage.removeItem('user');
   },
 
-  getUser: (): LoginResponse | null => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
+  getUser() {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    return JSON.parse(localStorage.getItem('user') || 'null');
   },
 
   isAuthenticated: (): boolean => {
+    if (typeof window === 'undefined') {
+      return false;
+    }
     return !!localStorage.getItem('token');
   },
 
   getToken: (): string | null => {
+    if (typeof window === 'undefined') {
+      return null;
+    }
     return localStorage.getItem('token');
   }
 };
