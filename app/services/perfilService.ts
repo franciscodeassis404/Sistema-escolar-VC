@@ -37,15 +37,15 @@ export const perfilService = {
    */
   buscarMeuPerfilAluno: async (): Promise<AlunoDetalhes> => {
     try {
-      console.log('📡 Buscando meu perfil de aluno (usuário autenticado)');
-      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-      console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/aluno`);
+      console.log('Buscando meu perfil de aluno (usuário autenticado)');
+      console.log('URL da API:', apiClient.defaults.baseURL);
+      console.log('Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/aluno`);
 
       const response = await apiClient.get<AlunoDetalhes>(`/meu-perfil/aluno`);
-      console.log('✅ Meu perfil de aluno carregado:', response.data);
+      console.log('Meu perfil de aluno carregado:', response.data);
       return response.data;
     } catch (error: any) {
-      console.error('❌ Erro ao buscar meu perfil de aluno:', error);
+      console.error('Erro ao buscar meu perfil de aluno:', error);
 
       if (error.response?.status === 404) {
         throw new Error('Seu perfil de aluno não foi encontrado');
@@ -60,15 +60,15 @@ export const perfilService = {
    */
   buscarMeuPerfilProfessor: async (): Promise<ProfessorDetalhes> => {
     try {
-      console.log('📡 Buscando meu perfil de professor (usuário autenticado)');
-      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-      console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/professor`);
+      console.log('Buscando meu perfil de professor (usuário autenticado)');
+      console.log('URL da API:', apiClient.defaults.baseURL);
+      console.log('Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/professor`);
 
       const response = await apiClient.get<ProfessorDetalhes>(`/meu-perfil/professor`);
-      console.log('✅ Meu perfil de professor carregado:', response.data);
+      console.log('Meu perfil de professor carregado:', response.data);
       return response.data;
     } catch (error: any) {
-      console.error('❌ Erro ao buscar meu perfil de professor:', error);
+      console.error('Erro ao buscar meu perfil de professor:', error);
 
       if (error.response?.status === 404) {
         throw new Error('Seu perfil de professor não foi encontrado');
@@ -83,28 +83,12 @@ export const perfilService = {
    */
   buscarPerfilAluno: async (id: number): Promise<AlunoDetalhes> => {
     try {
-      console.log(`📡 Buscando perfil do aluno ${id}`);
-      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-
-      // Tenta primeiro o endpoint de perfil
-      try {
-        console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/alunos/${id}/perfil`);
-        const response = await apiClient.get<AlunoDetalhes>(`/alunos/${id}/perfil`);
-        console.log('✅ Perfil do aluno carregado:', response.data);
-        return response.data;
-      } catch (perfilError: any) {
-        // Se der erro 500, tenta endpoint alternativo
-        if (perfilError.response?.status === 500) {
-          console.log('⚠️ Erro 500 no endpoint /perfil, tentando endpoint alternativo...');
-          console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/admin/dashboard/alunos/${id}`);
-          const response = await apiClient.get<AlunoDetalhes>(`/admin/dashboard/alunos/${id}`);
-          console.log('✅ Perfil do aluno carregado via endpoint alternativo:', response.data);
-          return response.data;
-        }
-        throw perfilError;
-      }
+      console.log(`Buscando perfil do aluno ${id}`);
+      const response = await apiClient.get<AlunoDetalhes>(`/alunos/${id}/perfil`);
+      console.log('Perfil do aluno carregado:', response.data);
+      return response.data;
     } catch (error: any) {
-      console.error('❌ Erro ao buscar perfil do aluno:', error);
+      console.error('Erro ao buscar perfil do aluno:', error);
 
       if (error.response?.status === 404) {
         throw new Error('Aluno não encontrado');
@@ -119,28 +103,12 @@ export const perfilService = {
    */
   buscarPerfilProfessor: async (id: number): Promise<ProfessorDetalhes> => {
     try {
-      console.log(`📡 Buscando perfil do professor ${id}`);
-      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-
-      // Tenta primeiro o endpoint de perfil
-      try {
-        console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/professores/${id}/perfil`);
-        const response = await apiClient.get<ProfessorDetalhes>(`/professores/${id}/perfil`);
-        console.log('✅ Perfil do professor carregado:', response.data);
-        return response.data;
-      } catch (perfilError: any) {
-        // Se der erro 500, tenta endpoint alternativo
-        if (perfilError.response?.status === 500) {
-          console.log('⚠️ Erro 500 no endpoint /perfil, tentando endpoint alternativo...');
-          console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/admin/dashboard/professores/${id}`);
-          const response = await apiClient.get<ProfessorDetalhes>(`/admin/dashboard/professores/${id}`);
-          console.log('✅ Perfil do professor carregado via endpoint alternativo:', response.data);
-          return response.data;
-        }
-        throw perfilError;
-      }
+      console.log(`Buscando perfil do professor ${id}`);
+      const response = await apiClient.get<ProfessorDetalhes>(`/professores/${id}/perfil`);
+      console.log('Perfil do professor carregado:', response.data);
+      return response.data;
     } catch (error: any) {
-      console.error('❌ Erro ao buscar perfil do professor:', error);
+      console.error('Erro ao buscar perfil do professor:', error);
 
       if (error.response?.status === 404) {
         throw new Error('Professor não encontrado');
