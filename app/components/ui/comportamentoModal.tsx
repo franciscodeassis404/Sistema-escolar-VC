@@ -17,6 +17,7 @@ interface ComportamentoModalProps {
   bimestre: string
   alunoId: number
   onSubmit: (avaliacoes: AvaliacaoData) => Promise<void>
+  onZerar?: () => void
   isLoading?: boolean
 }
 
@@ -60,6 +61,7 @@ export function ComportamentoModal({
   bimestre,
   alunoId,
   onSubmit,
+  onZerar,
   isLoading = false,
 }: ComportamentoModalProps) {
   const [avaliacoes, setAvaliacoes] = React.useState<AvaliacaoData>({
@@ -155,6 +157,21 @@ export function ComportamentoModal({
         </div>
 
         <div className="flex gap-3 justify-end pt-6 border-t border-border">
+          {onZerar && (
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (confirm(`Tem certeza que deseja zerar a avaliação de ${bimestre}?`)) {
+                  onZerar()
+                  onClose()
+                }
+              }}
+              disabled={isLoading}
+              className="rounded-md mr-auto"
+            >
+              Zerar Avaliação
+            </Button>
+          )}
           <Button
             variant="outline"
             onClick={onClose}

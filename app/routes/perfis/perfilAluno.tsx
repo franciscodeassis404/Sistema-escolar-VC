@@ -20,7 +20,7 @@ export default function PerfilAlunoRoute() {
   const [modalAberto, setModalAberto] = React.useState(false);
   const [bimestreAtual, setBimestreAtual] = React.useState<string>('');
 
-  const { avaliacoes, getMediaComportamentoBimestre, getMediaComportamentoGeral, adicionarAvaliacao } = useAvaliacoes(alunoId);;
+  const { avaliacoes, getMediaComportamentoBimestre, getMediaComportamentoGeral, adicionarAvaliacao, zerarAvaliacao } = useAvaliacoes(alunoId);
 
   React.useEffect(() => {
     if (alunoId) {
@@ -43,7 +43,7 @@ export default function PerfilAlunoRoute() {
       console.log('✅ Dados do aluno recebidos:', dados);
       setAluno(dados);
     } catch (err: any) {
-      console.error('❌ Erro detalhado ao carregar perfil:', {
+      console.error(' Erro detalhado ao carregar perfil:', {
         message: err.message,
         response: err.response?.data,
         status: err.response?.status,
@@ -82,6 +82,11 @@ export default function PerfilAlunoRoute() {
     });
     
     setModalAberto(false);
+  };
+
+  const handleZerarAvaliacao = () => {
+    zerarAvaliacao(bimestreAtual);
+    console.log(`Avaliação de ${bimestreAtual} removida`);
   };
 
   if (loading) {
@@ -311,6 +316,7 @@ export default function PerfilAlunoRoute() {
         bimestre={bimestreAtual}
         alunoId={Number(alunoId) || 0}
         onSubmit={handleSalvarAvaliacao}
+        onZerar={handleZerarAvaliacao}
         isLoading={false}
       />
     </div>
