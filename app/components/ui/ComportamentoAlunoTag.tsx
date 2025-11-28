@@ -21,13 +21,22 @@ export function ComportamentoAlunoTag({ alunoId, showMedia = true, className }: 
     );
   }
 
+  const origem = mediaGeral.origem === "media_4_bimestres" 
+    ? "Média de 4 bimestres"
+    : "Última nota registrada";
+
   return (
     <div className={`flex flex-col items-center gap-1 ${className}`}>
       <ComportamentoTag tipo={mediaGeral.tipo} />
       {showMedia && (
-        <span className="text-xs text-muted-foreground font-medium">
-          ({mediaGeral.media.toFixed(1)})
-        </span>
+        <div className="flex flex-col items-center gap-0.5">
+          <span className="text-xs text-muted-foreground font-medium">
+            ({mediaGeral.media.toFixed(1)})
+          </span>
+          <span className="text-xs text-muted-foreground" title={origem}>
+            {mediaGeral.origem === "media_4_bimestres" ? "4 bimestres" : "Última"}
+          </span>
+        </div>
       )}
     </div>
   );
