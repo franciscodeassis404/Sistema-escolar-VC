@@ -33,13 +33,59 @@ export interface ProfessorDetalhes {
 
 export const perfilService = {
   /**
-   * Buscar perfil completo de um aluno
+   * Buscar perfil do ALUNO AUTENTICADO (novo - sem ID)
+   */
+  buscarMeuPerfilAluno: async (): Promise<AlunoDetalhes> => {
+    try {
+      console.log('📡 Buscando meu perfil de aluno (usuário autenticado)');
+      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
+      console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/aluno`);
+
+      const response = await apiClient.get<AlunoDetalhes>(`/meu-perfil/aluno`);
+      console.log('✅ Meu perfil de aluno carregado:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Erro ao buscar meu perfil de aluno:', error);
+
+      if (error.response?.status === 404) {
+        throw new Error('Seu perfil de aluno não foi encontrado');
+      }
+
+      throw new Error(error.response?.data?.message || 'Erro ao carregar seu perfil');
+    }
+  },
+
+  /**
+   * Buscar perfil do PROFESSOR AUTENTICADO (novo - sem ID)
+   */
+  buscarMeuPerfilProfessor: async (): Promise<ProfessorDetalhes> => {
+    try {
+      console.log('📡 Buscando meu perfil de professor (usuário autenticado)');
+      console.log('🌐 URL da API:', apiClient.defaults.baseURL);
+      console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/meu-perfil/professor`);
+
+      const response = await apiClient.get<ProfessorDetalhes>(`/meu-perfil/professor`);
+      console.log('✅ Meu perfil de professor carregado:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Erro ao buscar meu perfil de professor:', error);
+
+      if (error.response?.status === 404) {
+        throw new Error('Seu perfil de professor não foi encontrado');
+      }
+
+      throw new Error(error.response?.data?.message || 'Erro ao carregar seu perfil');
+    }
+  },
+
+  /**
+   * Buscar perfil completo de um aluno por ID (para admins)
    */
   buscarPerfilAluno: async (id: number): Promise<AlunoDetalhes> => {
     try {
       console.log(`📡 Buscando perfil do aluno ${id}`);
       console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-      
+
       // Tenta primeiro o endpoint de perfil
       try {
         console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/alunos/${id}/perfil`);
@@ -59,23 +105,23 @@ export const perfilService = {
       }
     } catch (error: any) {
       console.error('❌ Erro ao buscar perfil do aluno:', error);
-      
+
       if (error.response?.status === 404) {
         throw new Error('Aluno não encontrado');
       }
-      
+
       throw new Error(error.response?.data?.message || 'Erro ao carregar perfil do aluno');
     }
   },
 
   /**
-   * Buscar perfil completo de um professor
+   * Buscar perfil completo de um professor por ID (para admins)
    */
   buscarPerfilProfessor: async (id: number): Promise<ProfessorDetalhes> => {
     try {
       console.log(`📡 Buscando perfil do professor ${id}`);
       console.log('🌐 URL da API:', apiClient.defaults.baseURL);
-      
+
       // Tenta primeiro o endpoint de perfil
       try {
         console.log('🔗 Tentando endpoint:', `${apiClient.defaults.baseURL}/professores/${id}/perfil`);
@@ -95,11 +141,11 @@ export const perfilService = {
       }
     } catch (error: any) {
       console.error('❌ Erro ao buscar perfil do professor:', error);
-      
+
       if (error.response?.status === 404) {
         throw new Error('Professor não encontrado');
       }
-      
+
       throw new Error(error.response?.data?.message || 'Erro ao carregar perfil do professor');
     }
   },

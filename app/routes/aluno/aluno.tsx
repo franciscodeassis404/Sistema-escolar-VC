@@ -34,48 +34,38 @@ export default function AlunoDashboard() {
   }, []);
 
   async function carregarMeuPerfil() {
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const user = authService.getUser();
-      
-      console.log('👤 Dados do usuário no localStorage:', user);
-      
-      if (!user || !user.idUsuario) {
-        console.error('⚠️ Usuário não encontrado ou sem ID');
-        throw new Error('Usuário não autenticado. Faça login novamente.');
-      }
+      try {
+        console.log('🔍 Carregando perfil do aluno autenticado');
 
-      console.log('🔍 Carregando perfil do aluno logado');
-      console.log('📋 ID do usuário:', user.idUsuario);
-      console.log('📧 Email:', user.email);
-      console.log('👔 Perfil:', user.perfil);
-      
-      const dados = await perfilService.buscarPerfilAluno(user.idUsuario);
-      console.log('✅ Perfil do aluno carregado com sucesso:', dados);
-      setStudent(dados);
-    } catch (err: any) {
-      console.error('❌ Erro completo ao carregar perfil:', {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status,
-        erro: err
-      });
-      
-      let mensagemErro = err.message || 'Erro ao carregar perfil';
-      
-      if (err.response?.status === 404) {
-        mensagemErro = 'Perfil do aluno não encontrado no sistema';
-      } else if (err.response?.status === 500) {
-        mensagemErro = 'Erro no servidor ao buscar perfil';
+        // Chama o novo método que não precisa de ID
+        const dados = await perfilService.buscarMeuPerfilAluno();
+
+        console.log('✅ Perfil do aluno carregado com sucesso:', dados);
+        setStudent(dados);
+      } catch (err: any) {
+        console.error('❌ Erro completo ao carregar perfil:', {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status,
+          erro: err
+        });
+
+        let mensagemErro = err.message || 'Erro ao carregar perfil';
+
+        if (err.response?.status === 404) {
+          mensagemErro = 'Perfil do aluno não encontrado no sistema';
+        } else if (err.response?.status === 500) {
+          mensagemErro = 'Erro no servidor ao buscar perfil';
+        }
+
+        setError(mensagemErro);
+      } finally {
+        setLoading(false);
       }
-      
-      setError(mensagemErro);
-    } finally {
-      setLoading(false);
     }
-  }
 
   if (loading) {
     return (
