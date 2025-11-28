@@ -2,8 +2,9 @@ import * as React from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { authService } from "~/services/auth.service";
+
 
 import {
   Card,
@@ -65,11 +66,13 @@ function LoginForm({
   onSubmit,
   isDisabled,
   error,
+  onForgotPassword,
 }: {
   form: UseFormReturn<LoginValues>;
   onSubmit: (values: LoginValues) => Promise<void>;
   isDisabled: boolean;
   error?: string;
+  onForgotPassword: () => void;
 }) {
   const profiles = [
     { label: "Professor", value: "professor", icon: <GraduationCap /> },
@@ -190,11 +193,16 @@ function LoginForm({
                 Entrar
               </Button>
 
-              <div className="flex items-center justify-center">
-                <a className="text-sm text-muted-foreground underline-offset-4 hover:underline">
-                  Esqueci a senha
-                </a>
-              </div>
+                <div className="flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={onForgotPassword}
+                    className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+                  >
+                    Esqueci a senha
+                  </button>
+                </div>
+
             </form>
           </Form>
         </CardContent>
@@ -213,12 +221,17 @@ export function meta() {
 export default function Login() {
   const navigate = useNavigate();
   const [error, setError] = React.useState("");
+  
+  function goToReset() {
+    navigate("/reset-password");
+  }
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: { email: "", password: "", profile: "professor" },
     mode: "onChange",
   });
+  
 
   const isDisabled =
     !form.watch("email") ||
@@ -263,6 +276,7 @@ export default function Login() {
           onSubmit={onSubmit}
           isDisabled={isDisabled}
           error={error}
+          onForgotPassword={goToReset}
         />
       </div>
     </main>

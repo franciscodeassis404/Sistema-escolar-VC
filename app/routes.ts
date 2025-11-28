@@ -8,6 +8,7 @@ export default [
 	route("professor", "routes/professor/professor.tsx"),
 	route("perfilAluno", "routes/perfis/perfilAluno.tsx"),
 	route("perfilProfessor", "routes/perfis/perfilprofessor.tsx"),
+	route("reset-password", "routes/login/reset-password.tsx"),
 	
 	// API Routes (Backend For Frontend)
 	route("api/auth", "routes/api/auth.ts"),
