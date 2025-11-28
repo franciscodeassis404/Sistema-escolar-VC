@@ -1,8 +1,10 @@
+// app/routes/admin/adduser.tsx
 import { ArrowLeft, Eye, EyeOff, Upload, X } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Navbar } from "~/components/ui/navbar";
 import { adminService, type NovoUsuario } from "~/services/admin.service";
+import { uploadService } from "~/services/uploadService"; // 👈 NOVO
 
 // Lista de turmas disponíveis
 const TURMAS = [
@@ -31,13 +33,13 @@ export default function AddUser() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null); // 👈 NOVO
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState(false);
 
-  // Estados do formulário
   const [formData, setFormData] = useState({
-    tipo: "",
+    tipo: "ALUNO",
     nomeCompleto: "",
     email: "",
     senha: "",
@@ -56,6 +58,10 @@ export default function AddUser() {
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Salvar o arquivo para upload posterior
+      setPhotoFile(file);
+
+      // Mostrar preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPhotoPreview(reader.result as string);
@@ -66,6 +72,7 @@ export default function AddUser() {
 
   const removePhoto = () => {
     setPhotoPreview(null);
+    setPhotoFile(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,8 +82,12 @@ export default function AddUser() {
     setSuccess(false);
 
     try {
-      // Validações
-      if (!formData.tipo || !formData.nomeCompleto || !formData.email || !formData.senha) {
+      // Validações básicas
+      if (!formData.tipo) {
+        throw new Error("Selecione o tipo de usuário");
+      }
+
+      if (!formData.nomeCompleto || !formData.email || !formData.senha) {
         throw new Error("Preencha todos os campos obrigatórios");
       }
 
@@ -88,13 +99,13 @@ export default function AddUser() {
         throw new Error("A senha deve ter no mínimo 6 caracteres");
       }
 
-      // Preparar dados conforme o tipo de usuário
       let dadosUsuario: NovoUsuario;
 
       if (formData.tipo === "ALUNO") {
         if (!formData.turma || !formData.dataNascimento) {
           throw new Error("Preencha turma e data de nascimento para alunos");
         }
+
         dadosUsuario = {
           tipo: "ALUNO",
           nomeCompleto: formData.nomeCompleto,
@@ -108,6 +119,7 @@ export default function AddUser() {
         if (!formData.matricula || !formData.especialidade) {
           throw new Error("Preencha matrícula e especialidade para professores");
         }
+
         dadosUsuario = {
           tipo: "PROFESSOR",
           nomeCompleto: formData.nomeCompleto,
@@ -127,11 +139,27 @@ export default function AddUser() {
         };
       }
 
-      // Enviar para o backend
-      await adminService.createUsuario(dadosUsuario);
+      console.log('📤 Criando usuário:', dadosUsuario);
+
+      // 1️⃣ PRIMEIRO: Criar o usuário
+      const usuarioCriado = await adminService.createUsuario(dadosUsuario);
+      console.log('✅ Usuário criado:', usuarioCriado);
+
+      // 2️⃣ DEPOIS: Se tem foto E é aluno, fazer upload
+      if (photoFile && usuarioCriado.id && formData.tipo === "ALUNO") {
+        console.log('📸 Fazendo upload da foto...');
+        try {
+          await uploadService.uploadFotoAluno(usuarioCriado.id, photoFile);
+          console.log('✅ Foto enviada com sucesso!');
+        } catch (uploadError) {
+          console.error('⚠️ Erro ao enviar foto:', uploadError);
+          // Não falha a criação do usuário, apenas avisa
+          setError('Usuário criado, mas houve erro ao enviar a foto. Você pode adicionar depois.');
+        }
+      }
 
       setSuccess(true);
-      
+
       // Redirecionar após 2 segundos
       setTimeout(() => {
         navigate("/admin");
@@ -139,16 +167,12 @@ export default function AddUser() {
 
     } catch (err) {
       console.error("Erro no cadastro:", err);
-      
-      let errorMessage = "Erro ao cadastrar usuário";
-      
-      if (err instanceof TypeError && err.message.includes('fetch')) {
-        errorMessage = "Não foi possível conectar ao servidor. Verifique se o backend está rodando em http://localhost:8080";
-      } else if (err instanceof Error) {
-        errorMessage = err.message;
+
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Erro ao cadastrar usuário");
       }
-      
-      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -195,9 +219,9 @@ export default function AddUser() {
               <div className="flex items-center gap-4">
                 {photoPreview ? (
                   <div className="relative">
-                    <img 
-                      src={photoPreview} 
-                      alt="Preview" 
+                    <img
+                      src={photoPreview}
+                      alt="Preview"
                       className="w-24 h-24 rounded-full object-cover border-2 border-border"
                     />
                     <button
@@ -245,7 +269,6 @@ export default function AddUser() {
                 required
                 disabled={loading}
               >
-                <option value="">Selecione...</option>
                 <option value="ALUNO">Aluno</option>
                 <option value="PROFESSOR">Professor</option>
                 <option value="ADMIN">Administrador</option>
@@ -399,8 +422,6 @@ export default function AddUser() {
 
             {/* BOTÕES */}
             <div className="flex items-center justify-between pt-4 gap-4">
-
-              {/* Cancelar */}
               <Link
                 to="/admin"
                 className="w-[48%] py-3 border border-border rounded-md text-center font-medium bg-background hover:bg-accent transition-colors text-foreground"
@@ -408,7 +429,6 @@ export default function AddUser() {
                 Cancelar
               </Link>
 
-              {/* Adicionar */}
               <button
                 type="submit"
                 disabled={loading}
@@ -416,7 +436,6 @@ export default function AddUser() {
               >
                 {loading ? "Cadastrando..." : "Adicionar"}
               </button>
-
             </div>
 
           </form>

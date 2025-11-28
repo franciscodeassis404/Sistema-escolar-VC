@@ -48,7 +48,7 @@ const TagPerfil = ({ tipo = "professor", nomeUsuario, className, ...props }: Tag
     const { icon: Icon, label } = config[tipo];
 
     return (
-    <div className="flex items-center gap-2 text-secondary bg-tag-background dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-medium">
+    <div className="flex items-center gap-2 text-secondary dark:text-gray-400 bg-tag-background dark:bg-gray-700 px-3 py-1 rounded-full text-sm font-medium">
         <Icon className="w-4 h-4 text-primary dark:text-gray-300" />
         <span>{label}</span>
     </div>  

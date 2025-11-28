@@ -1,0 +1,5 @@
+-perfil aluno - ok
+-ver pq ele ta puxando outras pessoas que nao sao alunos no admin e no professor
+-botao de editar + adição das disciplinas
+-notas de comportamento para os alunos
+- esqueci a senha (se Francisco fizer ou se der tempo de eu fazer) - ok
