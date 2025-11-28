@@ -2,6 +2,7 @@ import * as React from "react";
 import { useSearchParams, useNavigate } from "react-router";
 import { BookOpen, TrendingUp, GraduationCap, ArrowLeft, Pencil, Loader2, AlertCircle } from "lucide-react";
 import { ComportamentoTag } from "~/components/ui/comportamento-tag";
+import { Button } from "~/components/ui/button";
 import { perfilService, type AlunoDetalhes } from "~/services/perfilService";
 
 export default function PerfilAlunoRoute() {
@@ -235,18 +236,36 @@ export default function PerfilAlunoRoute() {
               </h2>
 
               <div className="space-y-3">
-                {aluno.comportamentoHistorico.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between bg-primary/10 dark:bg-primary/20 px-6 py-4 rounded-xl"
-                  >
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">{item.bimestre}</p>
-                      <p className="text-xs text-muted-foreground">{item.meses}</p>
+                {aluno.comportamentoHistorico.map((item, index) => {
+                  const temNota = item.status && item.status.trim() !== '';
+                  const labelBotao = temNota ? 'Editar Comportamento' : 'Avaliar Comportamento';
+                  const tituloAbas = temNota ? `Editar comportamento do ${item.bimestre}` : `Avaliar comportamento do ${item.bimestre}`;
+
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between bg-primary/10 text-gray-50 dark:bg-primary/20 px-6 py-4 rounded-xl"
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">{item.bimestre}</p>
+                        <p className="text-xs text-muted-foreground">{item.meses}</p>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        {temNota && <ComportamentoTag tipo={mapComportamento(item.status)} />}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => console.log(tituloAbas)}
+                          className="flex items-center gap-2 rounded-md bg-primary hoover:bg-accent dark:bg-primary/30 dark:hover:bg-primary/40"
+                          title={tituloAbas}
+                        >
+                          <Pencil className="w-4 h-4" />
+                          {labelBotao}
+                        </Button>
+                      </div>
                     </div>
-                    <ComportamentoTag tipo={mapComportamento(item.status)} />
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
